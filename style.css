@@ -11,11 +11,15 @@
     --shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
 }
 
+/* RESET */
+
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
+
+/* GLOBAL */
 
 body {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -232,7 +236,7 @@ body {
     color: var(--accent);
 }
 
-/* CONTACT */
+/* CONTACT + BUCHUNG */
 
 .contact-wrapper {
     display: grid;
@@ -240,6 +244,77 @@ body {
     gap: 30px;
     margin-top: 20px;
 }
+
+/* Buchungsformular im gleichen Stil wie Kontakt */
+
+.booking-form {
+    background: rgba(15, 23, 42, 0.95);
+    padding: 24px 22px;
+    border-radius: var(--radius);
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    box-shadow: var(--shadow);
+}
+
+.form-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--accent);
+}
+
+.booking-form label {
+    display: block;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+}
+
+.booking-form input,
+.booking-form select {
+    width: 100%;
+    padding: 9px 10px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(148, 163, 184, 0.6);
+    background: #020617;
+    color: var(--text);
+    font-size: 0.95rem;
+}
+
+.booking-form input:focus,
+.booking-form select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px rgba(0, 230, 118, 0.4);
+}
+
+.checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 4px;
+}
+
+.submit-btn {
+    margin-top: 10px;
+    width: 100%;
+    padding: 11px 14px;
+    border-radius: 999px;
+    border: none;
+    background: var(--accent);
+    color: #02030a;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+.submit-btn:hover {
+    transform: translateY(-1px) scale(1.01);
+    box-shadow: 0 18px 40px rgba(0, 230, 118, 0.45);
+}
+
+/* Kontaktbox rechts */
 
 .contact-form {
     background: rgba(15, 23, 42, 0.95);
@@ -309,163 +384,17 @@ body {
     font-size: 0.9rem;
 }
 
-/* ------------------------------
-   GLOBAL STYLE
---------------------------------*/
-
-body {
-  font-family: "Inter", Arial, sans-serif;
-  background: #f3f4f6;
-  margin: 0;
-  padding: 0;
-  color: #222;
-}
-
-.container {
-  max-width: 1100px;
-  margin: 40px auto;
-  padding: 20px;
-  display: flex;
-  gap: 40px;
-  flex-wrap: wrap;
-}
-
-/* ------------------------------
-   FORMULAR BOX
---------------------------------*/
-
-.booking-form {
-  background: #ffffff;
-  padding: 35px;
-  border-radius: 16px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-  width: 100%;
-  max-width: 520px;
-  animation: fadeIn 0.4s ease;
-}
-
-.form-title {
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 20px;
-  color: #1e7e34;
-}
-
-/* ------------------------------
-   LABELS & INPUTS
---------------------------------*/
-
-.booking-form label {
-  margin-top: 18px;
-  display: block;
-  font-weight: 600;
-  font-size: 15px;
-}
-
-.booking-form input,
-.booking-form select {
-  width: 100%;
-  padding: 12px 14px;
-  margin-top: 6px;
-  border: 1px solid #d1d5db;
-  border-radius: 10px;
-  font-size: 15px;
-  background: #f9fafb;
-  transition: 0.2s;
-}
-
-.booking-form input:focus,
-.booking-form select:focus {
-  border-color: #1e7e34;
-  background: #ffffff;
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(30,126,52,0.15);
-}
-
-/* ------------------------------
-   CHECKBOX
---------------------------------*/
-
-.checkbox {
-  margin-top: 20px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 14px;
-}
-
-/* ------------------------------
-   BUTTON
---------------------------------*/
-
-.submit-btn {
-  margin-top: 28px;
-  width: 100%;
-  padding: 15px;
-  background: #1e7e34;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-size: 17px;
-  cursor: pointer;
-  font-weight: 700;
-  transition: 0.25s;
-}
-
-.submit-btn:hover {
-  background: #155724;
-  transform: translateY(-2px);
-}
-
-/* ------------------------------
-   KONTAKTBOX (rechte Seite)
---------------------------------*/
-
-.contact-box {
-  background: #ffffff;
-  padding: 25px;
-  border-radius: 16px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-  width: 100%;
-  max-width: 350px;
-  height: fit-content;
-}
-
-.contact-box h3 {
-  font-size: 22px;
-  margin-bottom: 15px;
-  color: #1e7e34;
-}
-
-.contact-box p {
-  margin: 8px 0;
-  font-size: 15px;
-}
-
-/* ------------------------------
-   ANIMATION
---------------------------------*/
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ------------------------------
-   RESPONSIVE
---------------------------------*/
+/* RESPONSIVE */
 
 @media (max-width: 900px) {
-  .container {
-    flex-direction: column;
-    align-items: center;
-  }
+    .contact-wrapper {
+        grid-template-columns: 1fr;
+    }
 }
-/* RESPONSIVE */
 
 @media (max-width: 800px) {
     .nav-links {
-        display: none; /* für einfaches erstes Setup – später kann man Burger-Menü bauen */
+        display: none;
     }
 
     .hero {
@@ -483,9 +412,5 @@ body {
 
     .section-alt {
         border-radius: 24px;
-    }
-
-    .contact-wrapper {
-        grid-template-columns: 1fr;
     }
 }
