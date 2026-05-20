@@ -1,26 +1,33 @@
-function handleSubmit(event) {
-    event.preventDefault();
+document.addEventListener("DOMContentLoaded", () => {
+    const dateInput = document.getElementById("datePicker");
+    const timePicker = document.getElementById("timePicker");
 
-    const name = document.getElementById("name").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const kurs = document.getElementById("kurs").value;
-    const nachricht = document.getElementById("nachricht").value.trim();
-    const status = document.getElementById("form-status");
+    // Uhrzeiten
+    const mondayTimes = ["15:00", "16:00", "17:00", "18:00"];
+    const thursdayTimes = ["14:00", "15:00", "16:00", "17:00"];
 
-    if (!name || !email || !nachricht) {
-        status.textContent = "Bitte fülle alle Pflichtfelder aus.";
-        status.style.color = "#ff5252";
-        return false;
-    }
+    // Nur Montag (1) & Donnerstag (4) erlauben
+    dateInput.addEventListener("input", () => {
+        const selected = new Date(dateInput.value);
+        const day = selected.getDay();
 
-    // Hier könntest du später echten Versand einbauen (z.B. mit Formspree / Backend)
-    status.textContent = "Danke für deine Anfrage! Ich melde mich so schnell wie möglich.";
-    status.style.color = "#00e676";
+        if (day !== 1 && day !== 4) {
+            dateInput.value = "";
+            timePicker.innerHTML = `<option value="">Bitte Montag oder Donnerstag wählen</option>`;
+            alert("Du kannst nur Montag oder Donnerstag auswählen.");
+            return;
+        }
 
-    // Felder leeren
-    document.getElementById("name").value = "";
-    document.getElementById("email").value = "";
-    document.getElementById("nachricht").value = "";
+        // Uhrzeiten automatisch setzen
+        timePicker.innerHTML = "";
 
-    return false;
-}
+        const times = day === 1 ? mondayTimes : thursdayTimes;
+
+        times.forEach(t => {
+            const opt = document.createElement("option");
+            opt.value = t;
+            opt.textContent = t + " Uhr";
+            timePicker.appendChild(opt);
+        });
+    });
+});
