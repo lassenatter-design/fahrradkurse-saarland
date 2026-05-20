@@ -139,39 +139,55 @@
         <p class="section-subtitle">Schreib mir für Termine oder Fragen.</p>
 
         <div class="contact-wrapper">
-           <form action="https://formspree.io/f/xojbevoq" method="POST">
+           <form action="https://formspree.io/f/xojbevoq" method="POST" class="booking-form">
 
-  <label>Name:</label>
+  <h2 class="form-title">Verbindliche Anmeldung – Fahrradkurs</h2>
+
+  <label>Name</label>
   <input type="text" name="name" required>
 
-  <label>E-Mail:</label>
+  <label>E-Mail</label>
   <input type="email" name="email" required>
 
-  <label>Telefonnummer:</label>
+  <label>Telefonnummer</label>
   <input type="text" name="phone" required>
 
-  <label>Kurs auswählen:</label>
+  <label>Kurs auswählen</label>
   <select name="course" required>
+    <option value="">Bitte auswählen…</option>
     <option value="Fahrradfahren lernen – Einsteigerkurs">Fahrradfahren lernen – Einsteigerkurs</option>
     <option value="E-Bike Sicherheitstraining">E-Bike Sicherheitstraining</option>
+    <option value="Kinder-Fahrradkurs">Kinder-Fahrradkurs</option>
+    <option value="Fahrradfahren für Erwachsene (Anfänger)">Fahrradfahren für Erwachsene (Anfänger)</option>
+    <option value="Fahrradfahren für Erwachsene (Fortgeschritten)">Fahrradfahren für Erwachsene (Fortgeschritten)</option>
+    <option value="Sicher im Straßenverkehr – Praxis">Sicher im Straßenverkehr – Praxis</option>
   </select>
 
-  <label>Datum:</label>
+  <label>Datum</label>
   <input type="date" name="date" required>
 
-  <label>Uhrzeit:</label>
-  <input type="time" name="time" required>
+  <label>Uhrzeit</label>
+  <select name="time" required>
+    <option value="">Bitte auswählen…</option>
+    <option value="Montag 15:00–16:00">Montag 15:00–16:00</option>
+    <option value="Montag 16:00–17:00">Montag 16:00–17:00</option>
+    <option value="Montag 17:00–18:00">Montag 17:00–18:00</option>
+    <option value="Donnerstag 15:00–16:00">Donnerstag 15:00–16:00</option>
+    <option value="Donnerstag 16:00–17:00">Donnerstag 16:00–17:00</option>
+    <option value="Donnerstag 17:00–18:00">Donnerstag 17:00–18:00</option>
+  </select>
 
-  <label>
+  <label class="checkbox">
     <input type="checkbox" name="verbindlich" required>
     Ich melde mich verbindlich an und zahle bar vor Ort.
   </label>
 
   <input type="hidden" name="_subject" value="Neue verbindliche Kurs-Anmeldung">
 
-  <button type="submit">Jetzt verbindlich anmelden</button>
+  <button type="submit" class="submit-btn">Jetzt verbindlich anmelden</button>
 
 </form>
+
 
 
 
