@@ -2,11 +2,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const dateInput = document.getElementById("datePicker");
     const timePicker = document.getElementById("timePicker");
 
-    // Uhrzeiten
-    const mondayTimes = ["15:00", "16:00", "17:00", "18:00"];
-    const thursdayTimes = ["14:00", "15:00", "16:00", "17:00"];
+    if (!dateInput || !timePicker) return;
 
-    // Nur Montag (1) & Donnerstag (4) erlauben
+    const mondayTimes = ["15:00–16:00", "16:00–17:00", "17:00–18:00"];
+    const thursdayTimes = ["15:00–16:00", "16:00–17:00", "17:00–18:00"];
+
+    function getBlocked() {
+        return JSON.parse(localStorage.getItem("blockedSlots") || "[]");
+    }
+
     dateInput.addEventListener("input", () => {
         const selected = new Date(dateInput.value);
         const day = selected.getDay();
@@ -18,16 +22,28 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // Uhrzeiten automatisch setzen
+        const times = day === 1 ? mondayTimes : thursdayTimes;
+        const blocked = getBlocked();
+        const date = dateInput.value;
+
         timePicker.innerHTML = "";
 
-        const times = day === 1 ? mondayTimes : thursdayTimes;
+        const available = times.filter(t => !blocked.includes(`${date} | ${t}`));
 
-        times.forEach(t => {
+        if (available.length === 0) {
+            const opt = document.createElement("option");
+            opt.value = "";
+            opt.textContent = "Keine Uhrzeiten mehr verfügbar";
+            timePicker.appendChild(opt);
+            return;
+        }
+
+        available.forEach(t => {
             const opt = document.createElement("option");
             opt.value = t;
-            opt.textContent = t + " Uhr";
+            opt.textContent = t;
             timePicker.appendChild(opt);
         });
     });
 });
+
