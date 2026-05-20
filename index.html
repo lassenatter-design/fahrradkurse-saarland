@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fahrradkurse Saarland – Sicher fahren lernen</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="hero" id="top">
+        <nav class="nav">
+            <div class="logo">Fahrradkurse<span>Saarland</span></div>
+            <ul class="nav-links">
+                <li><a href="#angebote">Angebote</a></li>
+                <li><a href="#vorteile">Warum ich?</a></li>
+                <li><a href="#preise">Preise</a></li>
+                <li><a href="#kontakt">Kontakt</a></li>
+            </ul>
+        </nav>
+
+        <div class="hero-content">
+            <h1>Sicher & selbstbewusst Fahrrad fahren.</h1>
+            <p>Individuelle Fahrradkurse für Kinder, Erwachsene & Senioren im Saarland – mit Fokus auf Sicherheit, Technik und Spaß.</p>
+            <div class="hero-buttons">
+                <a href="#angebote" class="btn primary">Kurse ansehen</a>
+                <a href="#kontakt" class="btn secondary">Direkt anfragen</a>
+            </div>
+        </div>
+    </header>
+
+    <section id="angebote" class="section">
+        <h2>Angebote</h2>
+        <p class="section-subtitle">Wähle den Kurs, der zu dir passt.</p>
+        <div class="cards">
+            <article class="card">
+                <h3>Einsteigerkurs</h3>
+                <p>Perfekt für alle, die unsicher sind oder Fahrradfahren neu lernen wollen.</p>
+                <ul>
+                    <li>60–90 Minuten</li>
+                    <li>Individuelle Betreuung</li>
+                    <li>Ideal für Kinder & Erwachsene</li>
+                </ul>
+            </article>
+
+            <article class="card">
+                <h3>E‑Bike Sicherheit</h3>
+                <p>Für alle, die mit dem E‑Bike sicher im Alltag unterwegs sein wollen.</p>
+                <ul>
+                    <li>Bremsen & Kurven</li>
+                    <li>Gefahren erkennen</li>
+                    <li>Tipps für Alltag & Verkehr</li>
+                </ul>
+            </article>
+
+            <article class="card">
+                <h3>Technik‑Workshop</h3>
+                <p>Lerne, dein Fahrrad selbst zu pflegen.</p>
+                <ul>
+                    <li>Bremsen einstellen</li>
+                    <li>Reifen flicken</li>
+                    <li>Kette pflegen</li>
+                </ul>
+            </article>
+        </div>
+    </section>
+
+    <section id="vorteile" class="section section-alt">
+        <h2>Warum meine Kurse?</h2>
+        <div class="features">
+            <div class="feature">
+                <h3>Persönlich & lokal</h3>
+                <p>Kurse direkt im Saarland – flexibel & nah.</p>
+            </div>
+            <div class="feature">
+                <h3>Sicherheit zuerst</h3>
+                <p>Fokus auf Verkehrssicherheit & richtige Technik.</p>
+            </div>
+            <div class="feature">
+                <h3>Individuelle Betreuung</h3>
+                <p>Keine Massenkurse – ich nehme mir Zeit.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="preise" class="section">
+        <h2>Preise</h2>
+        <p class="section-subtitle">Transparente Preise – ohne versteckte Kosten.</p>
+        <div class="pricing">
+            <div class="price-card">
+                <h3>Einzelkurs</h3>
+                <p class="price">60–80 €</p>
+                <p>Intensives 1:1‑Training.</p>
+            </div>
+            <div class="price-card highlight">
+                <h3>Gruppenkurs</h3>
+                <p class="price">20–30 € / Person</p>
+                <p>Ideal für Schulen & Vereine.</p>
+            </div>
+            <div class="price-card">
+                <h3>Technik‑Workshop</h3>
+                <p class="price">25–40 €</p>
+                <p>Fahrradpflege leicht erklärt.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="kontakt" class="section section-alt">
+        <h2>Kontakt</h2>
+        <p class="section-subtitle">Schreib mir für Termine oder Fragen.</p>
+
+        <div class="contact-wrapper">
+
+            <!-- ⭐⭐⭐ FORMULAR MIT FORMSPREE ⭐⭐⭐ -->
+            <form action="https://formspree.io/f/xojbevoq" method="POST" class="contact-form">
+
+                <label for="name">Name</label>
+                <input type="text" name="name" required>
+
+                <label for="email">E-Mail</label>
+                <input type="email" name="email" required>
+
+                <label for="kurs">Gewünschter Kurs</label>
+                <select name="kurs">
+                    <option>Einsteigerkurs</option>
+                    <option>E‑Bike Sicherheit</option>
+                    <option>Technik‑Workshop</option>
+                    <option>Sonstiges</option>
+                </select>
+
+                <label for="nachricht">Nachricht</label>
+                <textarea name="nachricht" rows="4" required></textarea>
+
+                <button type="submit" class="btn primary full">Anfrage senden</button>
+            </form>
+            <!-- ⭐⭐⭐ ENDE FORMULAR ⭐⭐⭐ -->
+
+            <div class="contact-info">
+                <h3>Direkter Kontakt</h3>
+                <p><strong>E‑Mail:</strong> info@fahrradkurse-saarland.de</p>
+                <p><strong>Instagram:</strong> @fahrradkurse.saarland</p>
+                <p><strong>Region:</strong> Saarland (Saarbrücken, Illingen, Umgebung)</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>© 2026 Fahrradkurse Saarland – Alle Rechte vorbehalten.</p>
+        <a href="#top" class="back-to-top">Nach oben ↑</a>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
