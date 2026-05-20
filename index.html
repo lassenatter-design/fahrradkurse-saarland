@@ -139,26 +139,40 @@
         <p class="section-subtitle">Schreib mir für Termine oder Fragen.</p>
 
         <div class="contact-wrapper">
-            <form action="https://formspree.io/f/xojbevoq" method="POST" class="contact-form">
-                <label for="name">Name</label>
-                <input type="text" name="name" required>
+            <form action="https://formspree.io/f/xojbevoq" method="POST">
 
-                <label for="email">E-Mail</label>
-                <input type="email" name="email" required>
+  <h2>Verbindliche Anmeldung – Fahrradkurs</h2>
 
-                <label for="kurs">Gewünschter Kurs</label>
-                <select name="kurs">
-                    <option>Einsteigerkurs</option>
-                    <option>E‑Bike Sicherheit</option>
-                    <option>Technik‑Workshop</option>
-                    <option>Sonstiges</option>
-                </select>
+  <label>Name:</label>
+  <input type="text" name="name" required>
 
-                <label for="nachricht">Nachricht</label>
-                <textarea name="nachricht" rows="4" required></textarea>
+  <label>E-Mail:</label>
+  <input type="email" name="email" required>
 
-                <button type="submit" class="btn primary full">Anfrage senden</button>
-            </form>
+  <label>Telefonnummer:</label>
+  <input type="text" name="phone" required>
+
+  <label>Kurs auswählen:</label>
+  <select name="course" required>
+    <option value="Fahrradfahren lernen – Einsteigerkurs">Fahrradfahren lernen – Einsteigerkurs</option>
+    <option value="E-Bike Sicherheitstraining">E-Bike Sicherheitstraining</option>
+  </select>
+
+  <label>Datum:</label>
+  <input type="date" name="date" required>
+
+  <label>Uhrzeit:</label>
+  <input type="time" name="time" required>
+
+  <label>
+    <input type="checkbox" name="verbindlich" required>
+    Ich melde mich verbindlich an und zahle bar vor Ort.
+  </label>
+
+  <button type="submit">Jetzt verbindlich anmelden</button>
+
+</form>
+
 
             <div class="contact-info">
                 <h3>Direkter Kontakt</h3>
