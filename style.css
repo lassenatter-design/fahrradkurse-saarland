@@ -23,10 +23,12 @@
 
 body {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background: radial-gradient(circle at top, #1e88e5 0, #0b1020 45%, #02030a 100%);
+    background: radial-gradient(circle at top, var(--primary) 0%, var(--bg) 45%, #02030a 100%);
     color: var(--text);
     line-height: 1.6;
+    min-height: 100vh;
 }
+
 
 /* NAV & HERO */
 
