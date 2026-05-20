@@ -1,275 +1,357 @@
-/* ------------------------------------
-   ROOT COLORS
------------------------------------- */
+/* -------------------------
+   DESIGN-TOKENS
+-------------------------- */
 
 :root {
-    --primary: #1e88e5;
-    --primary-dark: #1565c0;
-    --bg: #0b1020;
-    --text: #f5f5f5;
-    --card-bg: #111729;
-    --accent: #00e676;
-    --danger: #ff5252;
-    --muted: #9ea7bd;
-    --radius: 12px;
-    --shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+  --bg: #f5f7fb;
+  --bg-soft: #ffffff;
+  --text: #111827;
+  --muted: #6b7280;
+  --accent: #22c55e;
+  --accent-soft: rgba(34, 197, 94, 0.12);
+  --accent-dark: #16a34a;
+  --primary: #2563eb;
+  --radius-lg: 18px;
+  --radius-md: 12px;
+  --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.08);
+  --shadow-card: 0 10px 30px rgba(15, 23, 42, 0.06);
 }
 
-/* ------------------------------------
+/* -------------------------
    RESET
------------------------------------- */
+-------------------------- */
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
-
-/* ------------------------------------
-   GLOBAL BACKGROUND (DEIN VERLAUF)
------------------------------------- */
 
 body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background: linear-gradient(
-        180deg,
-        var(--primary) 0%,
-        var(--bg) 45%,
-        #02030a 100%
-    );
-    background-attachment: fixed;
-    color: var(--text);
-    line-height: 1.6;
-    min-height: 100vh;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at 10% 0%, rgba(37, 99, 235, 0.16), transparent 55%),
+    radial-gradient(circle at 90% 10%, rgba(34, 197, 94, 0.16), transparent 55%),
+    var(--bg);
+  color: var(--text);
+  line-height: 1.6;
 }
 
-/* ------------------------------------
+/* -------------------------
    NAVIGATION
------------------------------------- */
+-------------------------- */
 
 .nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 25px 8%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 22px 20px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .logo {
-    font-weight: 800;
-    font-size: 1.4rem;
+  font-weight: 800;
+  font-size: 1.3rem;
+  letter-spacing: 0.03em;
 }
 .logo span {
-    color: var(--accent);
+  color: var(--accent);
 }
 
 .nav-links {
-    list-style: none;
-    display: flex;
-    gap: 24px;
+  list-style: none;
+  display: flex;
+  gap: 22px;
 }
 .nav-links a {
-    color: var(--muted);
-    text-decoration: none;
-    font-size: 1rem;
-    transition: 0.2s ease;
+  text-decoration: none;
+  color: var(--muted);
+  font-size: 0.95rem;
+  transition: 0.2s ease;
 }
 .nav-links a:hover {
-    color: var(--accent);
+  color: var(--text);
 }
 
-/* ------------------------------------
-   HERO SECTION
------------------------------------- */
+/* -------------------------
+   HERO
+-------------------------- */
 
 .hero {
-    padding: 60px 8% 120px;
+  padding: 40px 20px 80px;
 }
 
-.hero h1 {
-    font-size: clamp(2.4rem, 4vw, 3.6rem);
-    font-weight: 800;
-    margin-bottom: 16px;
+.hero-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 40px;
+  align-items: center;
 }
 
-.hero p {
-    max-width: 600px;
-    color: var(--muted);
-    margin-bottom: 28px;
+.hero-content h1 {
+  font-size: clamp(2.4rem, 4vw, 3.4rem);
+  font-weight: 800;
+  margin-bottom: 14px;
 }
+
+.hero-content p {
+  color: var(--muted);
+  max-width: 520px;
+  margin-bottom: 24px;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.06);
+  color: #1d4ed8;
+  font-size: 0.8rem;
+  margin-bottom: 14px;
+}
+
+.hero-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* -------------------------
+   BUTTONS
+-------------------------- */
 
 .btn {
-    display: inline-block;
-    padding: 12px 26px;
-    border-radius: 999px;
-    font-weight: 600;
-    text-decoration: none;
-    cursor: pointer;
-    transition: 0.2s ease;
+  display: inline-block;
+  padding: 11px 22px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: 0.18s ease;
 }
 
 .btn.primary {
-    background: var(--accent);
-    color: #02030a;
-    box-shadow: var(--shadow);
+  background: var(--accent);
+  color: #ffffff;
+  box-shadow: var(--shadow-soft);
 }
 .btn.primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 22px 50px rgba(0, 230, 118, 0.45);
+  background: var(--accent-dark);
+  transform: translateY(-1px);
 }
 
-/* ------------------------------------
+.btn.secondary {
+  background: transparent;
+  color: var(--text);
+  border-color: rgba(148, 163, 184, 0.7);
+}
+.btn.secondary:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* -------------------------
    SECTIONS
------------------------------------- */
+-------------------------- */
 
 .section {
-    padding: 80px 8%;
-    max-width: 1200px;
-    margin: 0 auto;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 20px 70px;
 }
 
 .section h2 {
-    font-size: 2rem;
-    margin-bottom: 10px;
+  font-size: 1.8rem;
+  margin-bottom: 6px;
 }
 
 .section-subtitle {
-    color: var(--muted);
-    margin-bottom: 30px;
+  color: var(--muted);
+  margin-bottom: 24px;
 }
 
-/* ------------------------------------
-   CARDS
------------------------------------- */
+/* -------------------------
+   CARDS / ANGEBOTE
+-------------------------- */
 
 .cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
 }
 
 .card {
-    background: var(--card-bg);
-    padding: 24px;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
+  background: var(--bg-soft);
+  border-radius: var(--radius-md);
+  padding: 18px 18px 20px;
+  box-shadow: var(--shadow-card);
+  border: 1px solid rgba(148, 163, 184, 0.25);
 }
 
 .card h3 {
-    margin-bottom: 12px;
+  margin-bottom: 6px;
+  font-size: 1.1rem;
 }
 
 .card p {
-    color: var(--muted);
-    margin-bottom: 12px;
+  color: var(--muted);
+  font-size: 0.95rem;
 }
 
-/* ------------------------------------
-   BUCHUNGSFORMULAR (Dark Neon)
------------------------------------- */
+/* -------------------------
+   PREISE
+-------------------------- */
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+}
+
+.price-card {
+  background: var(--bg-soft);
+  border-radius: var(--radius-md);
+  padding: 18px 18px 20px;
+  box-shadow: var(--shadow-card);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  text-align: left;
+}
+
+.price-card.highlight {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-soft);
+}
+
+.price {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 6px 0 4px;
+}
+
+/* -------------------------
+   KONTAKT / BUCHUNG
+-------------------------- */
+
+.contact-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: flex-start;
+}
 
 .booking-form {
-    background: rgba(15, 23, 42, 0.95);
-    padding: 28px;
-    border-radius: var(--radius);
-    border: 1px solid rgba(148, 163, 184, 0.4);
-    box-shadow: var(--shadow);
-    max-width: 520px;
+  background: var(--bg-soft);
+  border-radius: var(--radius-lg);
+  padding: 22px 20px 24px;
+  box-shadow: var(--shadow-card);
+  border: 1px solid rgba(148, 163, 184, 0.25);
 }
 
 .form-title {
-    font-size: 1.6rem;
-    font-weight: 700;
-    margin-bottom: 18px;
-    color: var(--accent);
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 10px;
 }
 
 .booking-form label {
-    display: block;
-    font-size: 0.95rem;
-    margin-bottom: 6px;
+  display: block;
+  font-size: 0.9rem;
+  margin-bottom: 4px;
 }
 
 .booking-form input,
 .booking-form select {
-    width: 100%;
-    padding: 12px 14px;
-    margin-bottom: 16px;
-    border-radius: 8px;
-    border: 1px solid rgba(148, 163, 184, 0.6);
-    background: #020617;
-    color: var(--text);
-    font-size: 1rem;
-    transition: 0.2s ease;
+  width: 100%;
+  padding: 9px 11px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  font-size: 0.95rem;
+  background: #ffffff;
 }
 
 .booking-form input:focus,
 .booking-form select:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 2px rgba(0, 230, 118, 0.3);
-    outline: none;
+  outline: none;
+  border-color: var(--accent);
 }
 
 .checkbox {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: var(--muted);
-    margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin: 4px 0 10px;
 }
 
 .submit-btn {
-    width: 100%;
-    padding: 14px;
-    border-radius: 999px;
-    border: none;
-    background: var(--accent);
-    color: #02030a;
-    font-weight: 700;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: 0.2s ease;
+  width: 100%;
+  padding: 11px 14px;
+  border-radius: 999px;
+  border: none;
+  background: var(--accent);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: 0.18s ease;
 }
 .submit-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 18px 40px rgba(0, 230, 118, 0.45);
+  background: var(--accent-dark);
 }
 
-/* ------------------------------------
-   CONTACT BOX
------------------------------------- */
+/* Kontakt-Info rechts */
 
 .contact-info {
-    background: rgba(15, 23, 42, 0.9);
-    padding: 24px;
-    border-radius: var(--radius);
-    border: 1px solid rgba(148, 163, 184, 0.4);
-    box-shadow: var(--shadow);
+  background: var(--bg-soft);
+  border-radius: var(--radius-lg);
+  padding: 18px 18px 20px;
+  box-shadow: var(--shadow-card);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  font-size: 0.95rem;
+}
+
+.contact-info h3 {
+  margin-bottom: 8px;
 }
 
 .contact-info p {
-    color: var(--muted);
-    margin-bottom: 8px;
+  color: var(--muted);
+  margin-bottom: 4px;
 }
 
-/* ------------------------------------
+/* -------------------------
    FOOTER
------------------------------------- */
+-------------------------- */
 
 .footer {
-    padding: 40px 8%;
-    text-align: center;
-    color: var(--muted);
-    font-size: 0.9rem;
+  padding: 30px 20px 40px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.85rem;
 }
 
-/* ------------------------------------
+/* -------------------------
    RESPONSIVE
------------------------------------- */
+-------------------------- */
 
 @media (max-width: 900px) {
-    .nav-links {
-        display: none;
-    }
+  .hero-inner {
+    grid-template-columns: 1fr;
+  }
+  .contact-layout {
+    grid-template-columns: 1fr;
+  }
+  .nav-links {
+    display: none;
+  }
 }
