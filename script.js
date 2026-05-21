@@ -1,5 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const dateInput = document.getElementById("datePicker");
+ // Heutiges Datum als Minimum setzen
+const today = new Date().toISOString().split("T")[0];
+document.getElementById("datePicker").setAttribute("min", today);
+
+    const dateInput = document.getElementById("datePicker");
   const timeSelect = document.getElementById("timePicker");
 
   // Firestore: gesperrte Slots laden
@@ -10,45 +14,53 @@ document.addEventListener("DOMContentLoaded", () => {
     return list;
   }
 
-  // Zeiten aktualisieren, wenn Datum gewählt wird
-  async function updateTimes() {
-    const date = dateInput.value;
-    if (!date) return;
+ async function updateTimes() {
+  const date = dateInput.value;
+  if (!date) return;
 
-    const day = new Date(date).getDay();
+  const day = new Date(date).getDay(); // 1 = Montag, 4 = Donnerstag
 
-    // Nur Montag (1) & Donnerstag (4)
-    if (day !== 1 && day !== 4) {
-      alert("Nur Montag und Donnerstag sind buchbar.");
-      timeSelect.disabled = true;
-      return;
-    }
-
-    timeSelect.disabled = false;
-
-    const blocked = await getBlocked();
-
-    // Erst alles freigeben
-    [...timeSelect.options].forEach(opt => {
-      opt.disabled = false;
-      opt.style.color = "#000";
-    });
-
-    // Dann gesperrte Zeiten deaktivieren
-    blocked.forEach(entry => {
-      const [blockedDate, blockedTime] = entry.split(" | ");
-
-      if (blockedDate === date) {
-        const option = [...timeSelect.options].find(
-          o => o.value.includes(blockedTime)
-        );
-        if (option) {
-          option.disabled = true;
-          option.style.color = "#999";
-        }
-      }
-    });
+  // Nur Montag & Donnerstag erlauben
+  if (day !== 1 && day !== 4) {
+    alert("Nur Montag und Donnerstag sind buchbar.");
+    timeSelect.disabled = true;
+    return;
   }
+
+  timeSelect.disabled = false;
+
+  const blocked = await getBlocked();
+
+  // Erst alles freigeben
+  [...timeSelect.options].forEach(opt => {
+    opt.disabled = false;
+    opt.style.display = "none"; // <<< versteckt ALLE Optionen
+    opt.style.color = "#000";
+  });
+
+  // Jetzt NUR die passenden Optionen anzeigen
+  [...timeSelect.options].forEach(opt => {
+    if (day === 1 && opt.value.startsWith("Montag")) {
+      opt.style.display = "block";
+    }
+    if (day === 4 && opt.value.startsWith("Donnerstag")) {
+      opt.style.display = "block";
+    }
+  });
+
+  // Gesperrte Zeiten deaktivieren
+  blocked.forEach(entry => {
+    const [blockedDate, blockedTime] = entry.split(" | ");
+
+    if (blockedDate === date) {
+      const option = [...timeSelect.options].find(o => o.value.includes(blockedTime));
+      if (option) {
+        option.disabled = true;
+        option.style.color = "#999";
+      }
+    }
+  });
+}
 
   dateInput.addEventListener("input", updateTimes);
 });
