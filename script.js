@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   const dateInput = document.getElementById("datePicker");
   const timeSelect = document.getElementById("timePicker");
+  const courseSelect = document.querySelector("select[name='course']");
 
   // 🔥 Heutiges Datum als Minimum setzen (keine Vergangenheit)
   const today = new Date().toISOString().split("T")[0];
@@ -14,15 +15,35 @@ document.addEventListener("DOMContentLoaded", () => {
     return list;
   }
 
-  // 🔥 Zeiten aktualisieren, wenn Datum gewählt wird
+  // 🔥 Erlaubter Tag je nach Kurs
+  function getAllowedDayForCourse() {
+    const course = courseSelect.value;
+
+    if (course.includes("Kinder")) return 1; // Montag
+    if (course.includes("Erwachsene (Anfänger)")) return 4; // Donnerstag
+
+    return null; // falls später mehr Kurse kommen
+  }
+
+  // 🔥 Zeiten aktualisieren
   async function updateTimes() {
     const date = dateInput.value;
-    if (!date) return;
+    const course = courseSelect.value;
 
-    const day = new Date(date).getDay(); // 1 = Montag, 4 = Donnerstag
+    if (!date || !course) return;
 
-    // ❌ Andere Tage blockieren
-    if (day !== 1 && day !== 4) {
+    const selectedDay = new Date(date).getDay(); // 1 = Montag, 4 = Donnerstag
+    const allowedDay = getAllowedDayForCourse();
+
+    // ❌ Kurs hat festen Tag → Datum MUSS passen
+    if (allowedDay !== null && selectedDay !== allowedDay) {
+      alert("Für diesen Kurs ist nur ein bestimmter Tag buchbar.");
+      timeSelect.disabled = true;
+      return;
+    }
+
+    // ❌ Falls später mehr Kurse kommen → nur Mo/Do
+    if (allowedDay === null && selectedDay !== 1 && selectedDay !== 4) {
       alert("Nur Montag und Donnerstag sind buchbar.");
       timeSelect.disabled = true;
       return;
@@ -39,9 +60,9 @@ document.addEventListener("DOMContentLoaded", () => {
       opt.style.color = "#000";
     });
 
-    // 🔥 Nur passende Optionen anzeigen (über data-day)
+    // 🔥 Nur passende Optionen anzeigen
     [...timeSelect.options].forEach(opt => {
-      if (parseInt(opt.dataset.day) === day) {
+      if (parseInt(opt.dataset.day) === selectedDay) {
         opt.style.display = "block";
       }
     });
@@ -61,9 +82,10 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // 🔥 WICHTIG: Auswahl zurücksetzen (damit nichts vorausgewählt ist)
+    // 🔥 Auswahl zurücksetzen
     timeSelect.value = "";
   }
 
   dateInput.addEventListener("input", updateTimes);
+  courseSelect.addEventListener("input", updateTimes);
 });
