@@ -34,17 +34,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 🔥 Alle Optionen verstecken
     [...timeSelect.options].forEach(opt => {
-      opt.disabled = false;
       opt.style.display = "none";
+      opt.disabled = false;
       opt.style.color = "#000";
     });
 
-    // 🔥 Nur passende Optionen anzeigen
+    // 🔥 Nur passende Optionen anzeigen (über data-day)
     [...timeSelect.options].forEach(opt => {
-      if (day === 1 && opt.value.startsWith("Montag")) {
-        opt.style.display = "block";
-      }
-      if (day === 4 && opt.value.startsWith("Donnerstag")) {
+      if (parseInt(opt.dataset.day) === day) {
         opt.style.display = "block";
       }
     });
@@ -54,13 +51,18 @@ document.addEventListener("DOMContentLoaded", () => {
       const [blockedDate, blockedTime] = entry.split(" | ");
 
       if (blockedDate === date) {
-        const option = [...timeSelect.options].find(o => o.value.includes(blockedTime));
+        const option = [...timeSelect.options].find(
+          o => o.value === blockedTime
+        );
         if (option) {
           option.disabled = true;
           option.style.color = "#999";
         }
       }
     });
+
+    // 🔥 WICHTIG: Auswahl zurücksetzen (damit nichts vorausgewählt ist)
+    timeSelect.value = "";
   }
 
   dateInput.addEventListener("input", updateTimes);
