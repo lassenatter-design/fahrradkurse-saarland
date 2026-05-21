@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login – Fahrradkurse Saarland</title>
+  <link rel="stylesheet" href="style.css?v=1001">
+</head>
+<body>
+  <section class="section" style="max-width:420px;">
+    <h2>Admin Login</h2>
+    <p class="section-subtitle">Nur für Administratoren.</p>
+
+    <div class="booking-form">
+      <form id="loginForm">
+        <label>Benutzername</label>
+        <input type="text" id="username" required>
+
+        <label>Passwort</label>
+        <input type="password" id="password" required>
+
+        <button type="submit" class="submit-btn">Einloggen</button>
+        <p id="loginError" style="color:#ff3b30; margin-top:10px; display:none;">
+          Benutzername oder Passwort falsch.
+        </p>
+      </form>
+    </div>
+  </section>
+
+  <script src="auth.js?v=1001"></script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin – Fahrradkurse Saarland</title>
+  <link rel="stylesheet" href="style.css?v=1001">
+</head>
+<body>
+  <script>
+    // Login prüfen
+    const loggedIn = localStorage.getItem("adminLoggedIn");
+    if (loggedIn !== "true") {
+      window.location.href = "login.html";
+    }
+  </script>
+
+  <section class="section">
+    <h2>Admin Dashboard</h2>
+    <p class="section-subtitle">Verwalte Buchungszeiten und Einstellungen.</p>
+
+    <div class="contact-wrapper">
+      <!-- Zeiten sperren -->
+      <div class="booking-form">
+        <h3>Zeiten sperren / freigeben</h3>
+        <label>Datum wählen</label>
+        <input type="date" id="adminDate">
+
+        <div id="timeList" class="cards" style="margin-top:16px;"></div>
+
+        <button id="clearAll" class="btn secondary" style="margin-top:16px;">
+          Alle Sperrungen löschen
+        </button>
+      </div>
+
+      <!-- Übersicht -->
+      <div class="booking-form">
+        <h3>Gesperrte Zeiten</h3>
+        <p class="section-subtitle">Alle aktuell blockierten Slots.</p>
+        <ul id="blockedList" style="list-style:none; padding-left:0; font-size:0.95rem;"></ul>
+
+        <hr style="margin:18px 0; border:none; border-top:1px solid #e5e5ea;">
+
+        <button id="logoutBtn" class="btn secondary">
+          Logout
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script src="admin.js?v=1001"></script>
+</body>
+</html>
