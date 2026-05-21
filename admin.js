@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const mondayTimes = ["15:00–16:00", "16:00–17:00", "17:00–18:00"];
   const thursdayTimes = ["15:00–16:00", "16:00–17:00", "17:00–18:00"];
 
+  // --- BLOCKED STORAGE ---
   function getBlocked() {
     return JSON.parse(localStorage.getItem("blockedSlots") || "[]");
   }
@@ -15,8 +16,10 @@ document.addEventListener("DOMContentLoaded", () => {
   function saveBlocked(list) {
     localStorage.setItem("blockedSlots", JSON.stringify(list));
     renderBlockedList();
+    applyBlockedToSelect(); // <<< WICHTIG für Handy & Benutzer
   }
 
+  // --- ADMIN LISTE ---
   function renderBlockedList() {
     const blocked = getBlocked();
     blockedList.innerHTML = "";
@@ -33,6 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // --- ADMIN ZEITEN ---
   function renderTimes() {
     timeList.innerHTML = "";
 
@@ -76,10 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  if (adminDate) {
-    adminDate.addEventListener("input", renderTimes);
-  }
-
+  // --- ALLES LÖSCHEN ---
   if (clearAllBtn) {
     clearAllBtn.addEventListener("click", () => {
       if (confirm("Alle Sperrungen wirklich löschen?")) {
@@ -89,6 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // --- LOGOUT ---
   if (logoutBtn) {
     logoutBtn.addEventListener("click", () => {
       localStorage.removeItem("adminLoggedIn");
@@ -96,5 +98,37 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // --- BENUTZER SELECT SPERREN (HANDY FIX!) ---
+  function applyBlockedToSelect() {
+    const select = document.getElementById("zeit");
+    if (!select) return;
+
+    const blocked = getBlocked();
+
+    // Erst alles entsperren
+    [...select.options].forEach(opt => {
+      opt.disabled = false;
+      opt.style.color = "#000";
+    });
+
+    // Dann gesperrte Zeiten deaktivieren
+    blocked.forEach(entry => {
+      const time = entry.split(" | ")[1]; // "15:00–16:00"
+      const option = select.querySelector(`option[value="${time}"]`);
+      if (option) {
+        option.disabled = true;   // <<< HANDY KANN ES NICHT MEHR WÄHLEN
+        option.style.color = "#999";
+      }
+    });
+  }
+
+  // Beim Laden anwenden
+  applyBlockedToSelect();
+
+  // Wenn Admin etwas ändert → Benutzer-Select aktualisieren
+  window.addEventListener("storage", applyBlockedToSelect);
+
+  // Start
   renderBlockedList();
+  if (adminDate) adminDate.addEventListener("input", renderTimes);
 });
