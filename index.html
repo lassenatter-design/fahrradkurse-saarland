@@ -203,5 +203,29 @@ Mein Ziel ist es, dass du nach dem Kurs nicht nur fahren kannst — sondern dich
 
     <!-- Dein Script -->
     <script src="script.js?v=3001"></script>
+    <script>
+  async function loadHomepageContent() {
+    try {
+      const snap = await db.collection("settings").doc("homepage").get();
+      if (!snap.exists) return;
+
+      const data = snap.data();
+
+      const heroTitleEl = document.querySelector(".hero-content h1");
+      const heroSubtitleEl = document.querySelector(".hero-content p");
+      const seoTextEl = document.querySelector("#seo-text p");
+
+      if (data.heroTitle) heroTitleEl.textContent = data.heroTitle;
+      if (data.heroSubtitle) heroSubtitleEl.textContent = data.heroSubtitle;
+      if (data.seoText) seoTextEl.textContent = data.seoText;
+
+    } catch (err) {
+      console.error("Fehler beim Laden der Startseite:", err);
+    }
+  }
+
+  loadHomepageContent();
+</script>
+
 </body>
 </html>

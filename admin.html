@@ -1,72 +1,215 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-
-
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyD8dM3SYRmHI52aJnOIVLCkfbHAmM5h678",
-    authDomain: "bike-kurse.firebaseapp.com",
-    projectId: "bike-kurse",
-    storageBucket: "bike-kurse.firebasestorage.app",
-    messagingSenderId: "581675622978",
-    appId: "1:581675622978:web:9e0c051d13f5a1581083db",
-    measurementId: "G-PYMPVZ3753"
-  };
-
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-</script>
-
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin – Fahrradkurse Saarland</title>
-  <link rel="stylesheet" href="style.css?v=1001">
-</head>
-<body>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
   <script>
-    // Login prüfen
-    const loggedIn = localStorage.getItem("adminLoggedIn");
-    if (loggedIn !== "true") {
-      window.location.href = "login.html";
-    }
+    const firebaseConfig = {
+      apiKey: "AIzaSyD8dM3SYRmHI52aJnOIVLCkfbHAmM5h678",
+      authDomain: "bike-kurse.firebaseapp.com",
+      projectId: "bike-kurse",
+      storageBucket: "bike-kurse.firebasestorage.app",
+      messagingSenderId: "581675622978",
+      appId: "1:581675622978:web:9e0c051d13f5a1581083db",
+      measurementId: "G-PYMPVZ3753"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
   </script>
 
-  <section class="section">
-    <h2>Admin Dashboard</h2>
-    <p class="section-subtitle">Verwalte Buchungszeiten und Einstellungen.</p>
+  <link rel="stylesheet" href="style.css?v=1001">
+</head>
 
-    <div class="contact-wrapper">
-      <!-- Zeiten sperren -->
-      <div class="booking-form">
-        <h3>Zeiten sperren / freigeben</h3>
-        <label>Datum wählen</label>
-        <input type="date" id="adminDate">
+<body>
 
-        <div id="timeList" class="cards" style="margin-top:16px;"></div>
+<!-- LOGIN CHECK -->
+<script>
+  if (localStorage.getItem("adminLoggedIn") !== "true") {
+    window.location.href = "login.html";
+  }
+</script>
 
-        <button id="clearAll" class="btn secondary" style="margin-top:16px;">
-          Alle Sperrungen löschen
-        </button>
-      </div>
+<section class="section">
+  <h2>Admin Dashboard</h2>
+  <p class="section-subtitle">Verwalte Inhalte, Kurse und Buchungszeiten.</p>
 
-      <!-- Übersicht -->
-      <div class="booking-form">
-        <h3>Gesperrte Zeiten</h3>
-        <p class="section-subtitle">Alle aktuell blockierten Slots.</p>
-        <ul id="blockedList" style="list-style:none; padding-left:0; font-size:0.95rem;"></ul>
+  <div class="contact-wrapper">
 
-        <hr style="margin:18px 0; border:none; border-top:1px solid #e5e5ea;">
+    <!-- 🔥 BLOCK 1: STARTSEITEN TEXTE -->
+    <div class="booking-form">
+      <h3>Startseite bearbeiten</h3>
 
-        <button id="logoutBtn" class="btn secondary">
-          Logout
-        </button>
-      </div>
+      <label>Hero Titel</label>
+      <input id="heroTitle">
+
+      <label>Hero Untertitel</label>
+      <input id="heroSubtitle">
+
+      <label>SEO‑Text</label>
+      <textarea id="seoText" rows="5"></textarea>
+
+      <button id="saveHomepage" class="btn primary" style="margin-top:12px;">
+        Startseite speichern
+      </button>
     </div>
-  </section>
 
-  <script src="admin.js?v=1001"></script>
+    <!-- 🔥 BLOCK 2: KURSE BEARBEITEN -->
+    <div class="booking-form">
+      <h3>Kurse bearbeiten</h3>
+
+      <label>Kurs auswählen</label>
+      <select id="courseSelect">
+        <option value="">Bitte auswählen…</option>
+        <option value="kinder">Kinder-Fahrradkurs</option>
+        <option value="erwachsene">Einsteigerkurs Erwachsene</option>
+      </select>
+
+      <label>Titel</label>
+      <input id="courseTitle">
+
+      <label>Label im Formular</label>
+      <input id="courseLabel">
+
+      <label>Formular-Wert (value)</label>
+      <input id="courseFormValue">
+
+      <label>Beschreibung</label>
+      <textarea id="courseDescription" rows="4"></textarea>
+
+      <label>Preis</label>
+      <input id="coursePrice">
+
+      <label>Tag (1 = Montag, 4 = Donnerstag)</label>
+      <input id="courseDay" type="number" min="1" max="7">
+
+      <label>Zeiten (kommagetrennt)</label>
+      <input id="courseTimes">
+
+      <button id="saveCourse" class="btn primary" style="margin-top:12px;">
+        Kurs speichern
+      </button>
+    </div>
+
+    <!-- 🔥 BLOCK 3: ZEITEN SPERREN -->
+    <div class="booking-form">
+      <h3>Zeiten sperren / freigeben</h3>
+
+      <label>Datum wählen</label>
+      <input type="date" id="adminDate">
+
+      <div id="timeList" class="cards" style="margin-top:16px;"></div>
+
+      <button id="clearAll" class="btn secondary" style="margin-top:16px;">
+        Alle Sperrungen löschen
+      </button>
+    </div>
+
+    <!-- 🔥 BLOCK 4: GESPERRTE ZEITEN -->
+    <div class="booking-form">
+      <h3>Gesperrte Zeiten</h3>
+      <ul id="blockedList" style="list-style:none; padding-left:0;"></ul>
+
+      <hr style="margin:18px 0; border:none; border-top:1px solid #ccc;">
+
+      <button id="logoutBtn" class="btn secondary">Logout</button>
+    </div>
+
+  </div>
+</section>
+
+<!-- 🔥 ADMIN SCRIPT -->
+<script src="admin.js?v=1001"></script>
+
+<!-- 🔥 CMS SCRIPT -->
+<script>
+  /* ---------------------------
+     STARTSEITE LADEN & SPEICHERN
+  ---------------------------- */
+
+  async function loadHomepage() {
+    const snap = await db.collection("settings").doc("homepage").get();
+    if (!snap.exists) return;
+
+    const d = snap.data();
+    document.getElementById("heroTitle").value = d.heroTitle || "";
+    document.getElementById("heroSubtitle").value = d.heroSubtitle || "";
+    document.getElementById("seoText").value = d.seoText || "";
+  }
+
+  async function saveHomepage() {
+    await db.collection("settings").doc("homepage").set({
+      heroTitle: document.getElementById("heroTitle").value,
+      heroSubtitle: document.getElementById("heroSubtitle").value,
+      seoText: document.getElementById("seoText").value
+    }, { merge: true });
+
+    alert("Startseite gespeichert.");
+  }
+
+  document.getElementById("saveHomepage").addEventListener("click", saveHomepage);
+  loadHomepage();
+
+
+  /* ---------------------------
+     KURSE LADEN & SPEICHERN
+  ---------------------------- */
+
+  const courseSelectEl = document.getElementById("courseSelect");
+
+  async function loadCourse() {
+    const id = courseSelectEl.value;
+    if (!id) return;
+
+    const snap = await db.collection("courses").doc(id).get();
+    if (!snap.exists) return;
+
+    const c = snap.data();
+
+    document.getElementById("courseTitle").value = c.title || "";
+    document.getElementById("courseLabel").value = c.label || "";
+    document.getElementById("courseFormValue").value = c.formValue || "";
+    document.getElementById("courseDescription").value = c.description || "";
+    document.getElementById("coursePrice").value = c.price || "";
+    document.getElementById("courseDay").value = c.day || "";
+    document.getElementById("courseTimes").value = (c.times || []).join(",");
+  }
+
+  async function saveCourse() {
+    const id = courseSelectEl.value;
+    if (!id) return alert("Bitte Kurs auswählen.");
+
+    await db.collection("courses").doc(id).set({
+      title: document.getElementById("courseTitle").value,
+      label: document.getElementById("courseLabel").value,
+      formValue: document.getElementById("courseFormValue").value,
+      description: document.getElementById("courseDescription").value,
+      price: document.getElementById("coursePrice").value,
+      day: parseInt(document.getElementById("courseDay").value),
+      times: document.getElementById("courseTimes").value.split(",").map(t => t.trim())
+    }, { merge: true });
+
+    alert("Kurs gespeichert.");
+  }
+
+  courseSelectEl.addEventListener("change", loadCourse);
+  document.getElementById("saveCourse").addEventListener("click", saveCourse);
+
+
+  /* ---------------------------
+     LOGOUT
+  ---------------------------- */
+  document.getElementById("logoutBtn").addEventListener("click", () => {
+    localStorage.removeItem("adminLoggedIn");
+    window.location.href = "login.html";
+  });
+</script>
+
 </body>
 </html>
