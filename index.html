@@ -5,22 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- SEO Grunddaten -->
-    <title>Fahrradkurse Saarland – Sicher Fahrradfahren lernen für Kinder & Erwachsene</title>
-    <meta name="description" content="Fahrradkurse im Saarland für Kinder, Erwachsene und Senioren. Sicher Fahrradfahren lernen, E‑Bike Training, Technik‑Workshops und individuelle Betreuung. Jetzt Termin anfragen!">
+    <title>Fahrradkurse Saarland – Sicher Fahrradfahren lernen</title>
+    <meta name="description" content="Fahrradkurse im Saarland für Kinder, Erwachsene und Senioren. Sicher Fahrradfahren lernen, E‑Bike Training, Technik‑Workshops und individuelle Betreuung.">
     <meta name="keywords" content="Fahrradkurs Saarland, Fahrrad fahren lernen, E-Bike Kurs Saarland, Fahrradtraining Saarbrücken, Fahrradkurs Kinder, Fahrradkurs Erwachsene, Fahrradschule Saarland">
 
     <!-- Open Graph -->
     <meta property="og:title" content="Fahrradkurse Saarland – Sicher Fahrradfahren lernen">
     <meta property="og:description" content="Individuelle Fahrradkurse für Kinder, Erwachsene & Senioren. E‑Bike Sicherheit, Technik‑Workshops und persönliche Betreuung.">
-    <meta property="og:url" content="https://lassenatter-design.github.io/fahrradkurse-saarland/">
     <meta property="og:type" content="website">
-
-    <meta name="language" content="de">
-    <meta http-equiv="Content-Language" content="de">
 
     <link rel="stylesheet" href="style.css?v=999999">
 
-    <!-- 🔥 Firebase (funktionierende compat-Version) -->
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
@@ -41,6 +37,8 @@
 </head>
 
 <body>
+
+    <!-- HERO -->
     <header class="hero" id="top">
         <nav class="nav">
             <div class="logo">Fahrradkurse<span>Saarland</span></div>
@@ -53,8 +51,9 @@
         </nav>
 
         <div class="hero-content">
-            <h1>Sicher & selbstbewusst Fahrrad fahren.</h1>
-            <p>Individuelle Fahrradkurse für Kinder, Erwachsene & Senioren im Saarland – mit Fokus auf Sicherheit, Technik und Spaß.</p>
+            <h1 id="heroTitle">Lade...</h1>
+            <p id="heroSubtitle">Bitte warten...</p>
+
             <div class="hero-buttons">
                 <a href="#angebote" class="btn primary">Kurse ansehen</a>
                 <a href="#kontakt" class="btn secondary">Direkt anfragen</a>
@@ -62,34 +61,17 @@
         </div>
     </header>
 
+    <!-- ANGEBOTE -->
     <section id="angebote" class="section">
         <h2>Angebote</h2>
         <p class="section-subtitle">Wähle den Kurs, der zu dir passt.</p>
-        <div class="cards">
-            <article class="card">
-                <h3>Einsteigerkurs</h3>
-                <p>Perfekt für alle, die unsicher sind oder Fahrradfahren neu lernen wollen.</p>
-                <ul>
-                    <li>60–90 Minuten</li>
-                    <li>Individuelle Betreuung</li>
-                    <li>Ideal für Kinder & Erwachsene</li>
-                </ul>
-            </article>
 
-            <article class="card">
-                <h3>Kinderfahrradkurs</h3>
-                <p>Für alle die nur das Beste für ihr Kind wollen, damit es bestmöglich fahrradfahren lernt</p>
-                <ul>
-                        <li> Bremsen & Kurven</li>
-                        <li> Gefahren erkennen</li>
-                        <li> Gleichgewicht</li>
-                </ul>
-            </article>
-
-        
+        <div id="courseCards" class="cards">
+            <!-- Dynamisch aus Firebase -->
         </div>
     </section>
 
+    <!-- VORTEILE -->
     <section id="vorteile" class="section section-alt">
         <h2>Warum meine Kurse?</h2>
         <div class="features">
@@ -108,32 +90,23 @@
         </div>
     </section>
 
+    <!-- PREISE -->
     <section id="preise" class="section">
         <h2>Preise</h2>
         <p class="section-subtitle">Transparente Preise – ohne versteckte Kosten.</p>
-        <div class="pricing">
-            <div class="price-card">
-                <h3>Einzelkurs</h3>
-                <p class="price">60 €</p>
-                <p>Intensives 1:1‑Training. Nur auf Anfrage!</p>
-            </div>
-            <div class="price-card highlight">
-                <h3>Gruppenkurs</h3>
-                <p class="price">25 € / Person</p>
-                <p>Ideal zum Austausch und gemeinsamen Lernen</p>
-            </div>
+
+        <div class="pricing" id="pricingCards">
+            <!-- Dynamisch aus Firebase -->
         </div>
     </section>
 
+    <!-- SEO TEXT -->
     <section id="seo-text" class="section">
         <h2>Fahrradkurse im Saarland – sicher & individuell</h2>
-        <p>Fahrradfahren bedeutet Freiheit — und genau diese Freiheit möchte ich Menschen im Saarland ermöglichen. Mit meinen individuellen Fahrradkursen helfe ich Kindern, Erwachsenen und Senioren dabei, sicher, selbstbewusst und mit Freude aufs Rad zu steigen. Jeder Mensch lernt anders, deshalb passe ich jeden Kurs an das persönliche Tempo und die Bedürfnisse meiner Teilnehmer an.
-
-Ob erste Fahrversuche, Unsicherheiten im Straßenverkehr oder der Wunsch, endlich souverän mit dem E‑Bike unterwegs zu sein: Bei mir steht Sicherheit an erster Stelle. Mit Geduld, Erfahrung und einem klaren Blick für Details begleite ich dich Schritt für Schritt.
-
-Mein Ziel ist es, dass du nach dem Kurs nicht nur fahren kannst — sondern dich wirklich sicher fühlst. Egal ob in Saarbrücken, Illingen oder der Umgebung: Ich freue mich darauf, dich auf deinem Weg zum sicheren Fahrradfahren zu unterstützen.</p>
+        <p id="seoText">Lade...</p>
     </section>
 
+    <!-- KONTAKT -->
     <section id="kontakt" class="section section-alt">
         <h2>Kontakt</h2>
         <p class="section-subtitle">Schreib mir für Termine oder Fragen.</p>
@@ -153,35 +126,20 @@ Mein Ziel ist es, dass du nach dem Kurs nicht nur fahren kannst — sondern dich
                 <input type="text" name="phone" required>
 
                 <label>Kurs auswählen</label>
-                <select name="course" required>
+                <select name="course" id="courseSelectPublic" required>
                     <option value="">Bitte auswählen…</option>
-
-                    <option value="Kinderkurs">Kinder-Fahrradkurs (nur Montag)</option>
-                    <option value="Erwachsene-Anfaenger">Einsteigerkurs Erwachsene (nur Donnerstag)</option>
-
                 </select>
 
                 <label>Datum</label>
                 <input type="date" id="datePicker" name="date" required min="">
 
                 <label>Uhrzeit</label>
-                <select id="timePicker" name="time" required>
-                    <option value="15:00–16:00" data-day="1">Montag 15:00–16:00</option>
-                    <option value="16:00–17:00" data-day="1">Montag 16:00–17:00</option>
-                    <option value="17:00–18:00" data-day="1">Montag 17:00–18:00</option>
-
-                    <option value="15:00–16:00" data-day="4">Donnerstag 15:00–16:00</option>
-                    <option value="16:00–17:00" data-day="4">Donnerstag 16:00–17:00</option>
-                    <option value="17:00–18:00" data-day="4">Donnerstag 17:00–18:00</option>
-
-                </select>
+                <select id="timePicker" name="time" required></select>
 
                 <label class="checkbox">
                     <input type="checkbox" name="verbindlich" required>
                     Ich melde mich verbindlich an und zahle bar vor Ort.
                 </label>
-
-                <input type="hidden" name="_subject" value="Neue verbindliche Kurs-Anmeldung">
 
                 <button type="submit" class="submit-btn">Jetzt verbindlich anmelden</button>
 
@@ -201,31 +159,93 @@ Mein Ziel ist es, dass du nach dem Kurs nicht nur fahren kannst — sondern dich
         <a href="#top" class="back-to-top">Nach oben ↑</a>
     </footer>
 
-    <!-- Dein Script -->
-    <script src="script.js?v=3001"></script>
+    <!-- DYNAMISCHE INHALTE LADEN -->
     <script>
-  async function loadHomepageContent() {
-    try {
-      const snap = await db.collection("settings").doc("homepage").get();
-      if (!snap.exists) return;
+    document.addEventListener("DOMContentLoaded", async () => {
 
-      const data = snap.data();
+        /* 🔥 STARTSEITE LADEN */
+        async function loadHomepageContent() {
+            const snap = await db.collection("settings").doc("homepage").get();
+            if (!snap.exists) return;
 
-      const heroTitleEl = document.querySelector(".hero-content h1");
-      const heroSubtitleEl = document.querySelector(".hero-content p");
-      const seoTextEl = document.querySelector("#seo-text p");
+            const d = snap.data();
+            document.getElementById("heroTitle").textContent = d.heroTitle;
+            document.getElementById("heroSubtitle").textContent = d.heroSubtitle;
+            document.getElementById("seoText").textContent = d.seoText;
+        }
 
-      if (data.heroTitle) heroTitleEl.textContent = data.heroTitle;
-      if (data.heroSubtitle) heroSubtitleEl.textContent = data.heroSubtitle;
-      if (data.seoText) seoTextEl.textContent = data.seoText;
+        /* 🔥 KURSE FÜR FORMULAR LADEN */
+        async function loadCoursesForForm() {
+            const select = document.getElementById("courseSelectPublic");
+            select.innerHTML = '<option value="">Bitte auswählen…</option>';
 
-    } catch (err) {
-      console.error("Fehler beim Laden der Startseite:", err);
-    }
-  }
+            const snapshot = await db.collection("courses").get();
+            snapshot.forEach(doc => {
+                const c = doc.data();
+                const opt = document.createElement("option");
+                opt.value = c.formValue;
+                opt.textContent = c.label;
+                select.appendChild(opt);
+            });
+        }
 
-  loadHomepageContent();
-</script>
+        /* 🔥 ANGEBOTE-KARTEN LADEN */
+        async function loadCourseCards() {
+            const container = document.getElementById("courseCards");
+            container.innerHTML = "";
+
+            const snapshot = await db.collection("courses").get();
+            snapshot.forEach(doc => {
+                const c = doc.data();
+
+                const card = document.createElement("article");
+                card.classList.add("card");
+
+                card.innerHTML = `
+                    <h3>${c.title}</h3>
+                    <p>${c.description}</p>
+                    <ul>
+                        ${c.times.map(t => `<li>${t}</li>`).join("")}
+                    </ul>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        /* 🔥 PREISE LADEN */
+        async function loadPricing() {
+            const container = document.getElementById("pricingCards");
+            container.innerHTML = "";
+
+            const snapshot = await db.collection("courses").get();
+            snapshot.forEach(doc => {
+                const c = doc.data();
+
+                const card = document.createElement("div");
+                card.classList.add("price-card");
+
+                card.innerHTML = `
+                    <h3>${c.title}</h3>
+                    <p class="price">${c.price}</p>
+                    <p>${c.description}</p>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        /* 🔥 ALLES LADEN */
+        loadHomepageContent();
+        loadCoursesForForm();
+        loadCourseCards();
+        loadPricing();
+
+    });
+    </script>
+
+    <!-- BUCHUNGSLOGIK -->
+    <script src="script.js?v=3001"></script>
 
 </body>
 </html>
