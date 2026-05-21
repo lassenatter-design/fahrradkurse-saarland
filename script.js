@@ -37,17 +37,32 @@ document.addEventListener("DOMContentLoaded", () => {
     // ❌ Kurs hat festen Tag → Datum MUSS passen
     if (allowedDay !== null && selectedDay !== allowedDay) {
       alert("Für diesen Kurs ist nur ein bestimmter Tag buchbar.");
+
+      // Uhrzeiten komplett deaktivieren
       timeSelect.disabled = true;
-      return;
+
+      // Alle Optionen verstecken
+      [...timeSelect.options].forEach(opt => {
+        opt.style.display = "none";
+      });
+
+      // Auswahl zurücksetzen
+      timeSelect.value = "";
+
+      return; // aber erst NACHDEM wir alles ausgeblendet haben
     }
 
     // ❌ Falls später mehr Kurse kommen → nur Mo/Do
     if (allowedDay === null && selectedDay !== 1 && selectedDay !== 4) {
       alert("Nur Montag und Donnerstag sind buchbar.");
+
       timeSelect.disabled = true;
+      [...timeSelect.options].forEach(opt => opt.style.display = "none");
+      timeSelect.value = "";
       return;
     }
 
+    // Wenn wir hier sind → Tag ist gültig
     timeSelect.disabled = false;
 
     const blocked = await getBlocked();
