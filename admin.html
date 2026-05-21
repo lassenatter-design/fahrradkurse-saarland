@@ -8,6 +8,7 @@
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
 
   <script>
     const firebaseConfig = {
@@ -22,14 +23,14 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
+    const storage = firebase.storage();
   </script>
 
-  <link rel="stylesheet" href="style.css?v=1001">
+  <link rel="stylesheet" href="style.css?v=2001">
 </head>
 
 <body>
 
-<!-- LOGIN CHECK -->
 <script>
   if (localStorage.getItem("adminLoggedIn") !== "true") {
     window.location.href = "login.html";
@@ -38,11 +39,11 @@
 
 <section class="section">
   <h2>Admin Dashboard</h2>
-  <p class="section-subtitle">Verwalte Inhalte, Kurse und Buchungszeiten.</p>
+  <p class="section-subtitle">Verwalte Inhalte, Kurse, Bilder und Buchungszeiten.</p>
 
   <div class="contact-wrapper">
 
-    <!-- 🔥 BLOCK 1: STARTSEITEN TEXTE -->
+    <!-- STARTSEITE -->
     <div class="booking-form">
       <h3>Startseite bearbeiten</h3>
 
@@ -60,15 +61,49 @@
       </button>
     </div>
 
-    <!-- 🔥 BLOCK 2: KURSE BEARBEITEN -->
+    <!-- KURS-ERSTELLUNG -->
     <div class="booking-form">
-      <h3>Kurse bearbeiten</h3>
+      <h3>Neuen Kurs erstellen</h3>
+
+      <label>Kurs-ID (z.B. kinder, erwachsene)</label>
+      <input id="newCourseId">
+
+      <label>Titel</label>
+      <input id="newCourseTitle">
+
+      <label>Label im Formular</label>
+      <input id="newCourseLabel">
+
+      <label>Formular-Wert</label>
+      <input id="newCourseFormValue">
+
+      <label>Beschreibung</label>
+      <textarea id="newCourseDescription"></textarea>
+
+      <label>Preis</label>
+      <input id="newCoursePrice">
+
+      <label>Tag (1 = Montag, 4 = Donnerstag)</label>
+      <input id="newCourseDay" type="number" min="1" max="7">
+
+      <label>Zeiten (kommagetrennt)</label>
+      <input id="newCourseTimes">
+
+      <label>Kursbild hochladen</label>
+      <input type="file" id="newCourseImage">
+
+      <button id="createCourse" class="btn primary" style="margin-top:12px;">
+        Kurs erstellen
+      </button>
+    </div>
+
+    <!-- KURS-BEARBEITUNG -->
+    <div class="booking-form">
+      <h3>Kurs bearbeiten</h3>
 
       <label>Kurs auswählen</label>
       <select id="courseSelect">
         <option value="">Bitte auswählen…</option>
-        <option value="kinder">Kinder-Fahrradkurs</option>
-        <option value="erwachsene">Einsteigerkurs Erwachsene</option>
       </select>
 
       <label>Titel</label>
@@ -77,29 +112,34 @@
       <label>Label im Formular</label>
       <input id="courseLabel">
 
-      <label>Formular-Wert (value)</label>
+      <label>Formular-Wert</label>
       <input id="courseFormValue">
 
       <label>Beschreibung</label>
-      <textarea id="courseDescription" rows="4"></textarea>
+      <textarea id="courseDescription"></textarea>
 
       <label>Preis</label>
       <input id="coursePrice">
 
-      <label>Tag (1 = Montag, 4 = Donnerstag)</label>
+      <label>Tag</label>
       <input id="courseDay" type="number" min="1" max="7">
 
-      <label>Zeiten (kommagetrennt)</label>
+      <label>Zeiten</label>
       <input id="courseTimes">
+
+      <label>Neues Bild hochladen (optional)</label>
+      <input type="file" id="courseImage">
+
+      <img id="courseImagePreview" style="width:100%; margin-top:10px; border-radius:8px; display:none;">
 
       <button id="saveCourse" class="btn primary" style="margin-top:12px;">
         Kurs speichern
       </button>
     </div>
 
-    <!-- 🔥 BLOCK 3: ZEITEN SPERREN -->
+    <!-- ZEITEN SPERREN -->
     <div class="booking-form">
-      <h3>Zeiten sperren / freigeben</h3>
+      <h3>Zeiten sperren</h3>
 
       <label>Datum wählen</label>
       <input type="date" id="adminDate">
@@ -111,7 +151,7 @@
       </button>
     </div>
 
-    <!-- 🔥 BLOCK 4: GESPERRTE ZEITEN -->
+    <!-- GESPERRTE ZEITEN -->
     <div class="booking-form">
       <h3>Gesperrte Zeiten</h3>
       <ul id="blockedList" style="list-style:none; padding-left:0;"></ul>
@@ -124,92 +164,137 @@
   </div>
 </section>
 
-<!-- 🔥 ADMIN SCRIPT -->
-<script src="admin.js?v=1001"></script>
-
-<!-- 🔥 CMS SCRIPT -->
 <script>
-  /* ---------------------------
-     STARTSEITE LADEN & SPEICHERN
-  ---------------------------- */
+/* STARTSEITE */
+async function loadHomepage() {
+  const snap = await db.collection("settings").doc("homepage").get();
+  if (!snap.exists) return;
 
-  async function loadHomepage() {
-    const snap = await db.collection("settings").doc("homepage").get();
-    if (!snap.exists) return;
+  const d = snap.data();
+  heroTitle.value = d.heroTitle || "";
+  heroSubtitle.value = d.heroSubtitle || "";
+  seoText.value = d.seoText || "";
+}
 
-    const d = snap.data();
-    document.getElementById("heroTitle").value = d.heroTitle || "";
-    document.getElementById("heroSubtitle").value = d.heroSubtitle || "";
-    document.getElementById("seoText").value = d.seoText || "";
+saveHomepage.onclick = async () => {
+  await db.collection("settings").doc("homepage").set({
+    heroTitle: heroTitle.value,
+    heroSubtitle: heroSubtitle.value,
+    seoText: seoText.value
+  }, { merge: true });
+
+  alert("Startseite gespeichert.");
+};
+
+loadHomepage();
+
+/* KURS-ERSTELLUNG */
+createCourse.onclick = async () => {
+  const id = newCourseId.value.trim();
+  if (!id) return alert("Bitte Kurs-ID eingeben.");
+
+  let imagePath = "";
+
+  const file = newCourseImage.files[0];
+  if (file) {
+    const ref = storage.ref(`courses/${id}.jpg`);
+    await ref.put(file);
+    imagePath = `courses/${id}.jpg`;
   }
 
-  async function saveHomepage() {
-    await db.collection("settings").doc("homepage").set({
-      heroTitle: document.getElementById("heroTitle").value,
-      heroSubtitle: document.getElementById("heroSubtitle").value,
-      seoText: document.getElementById("seoText").value
-    }, { merge: true });
-
-    alert("Startseite gespeichert.");
-  }
-
-  document.getElementById("saveHomepage").addEventListener("click", saveHomepage);
-  loadHomepage();
-
-
-  /* ---------------------------
-     KURSE LADEN & SPEICHERN
-  ---------------------------- */
-
-  const courseSelectEl = document.getElementById("courseSelect");
-
-  async function loadCourse() {
-    const id = courseSelectEl.value;
-    if (!id) return;
-
-    const snap = await db.collection("courses").doc(id).get();
-    if (!snap.exists) return;
-
-    const c = snap.data();
-
-    document.getElementById("courseTitle").value = c.title || "";
-    document.getElementById("courseLabel").value = c.label || "";
-    document.getElementById("courseFormValue").value = c.formValue || "";
-    document.getElementById("courseDescription").value = c.description || "";
-    document.getElementById("coursePrice").value = c.price || "";
-    document.getElementById("courseDay").value = c.day || "";
-    document.getElementById("courseTimes").value = (c.times || []).join(",");
-  }
-
-  async function saveCourse() {
-    const id = courseSelectEl.value;
-    if (!id) return alert("Bitte Kurs auswählen.");
-
-    await db.collection("courses").doc(id).set({
-      title: document.getElementById("courseTitle").value,
-      label: document.getElementById("courseLabel").value,
-      formValue: document.getElementById("courseFormValue").value,
-      description: document.getElementById("courseDescription").value,
-      price: document.getElementById("coursePrice").value,
-      day: parseInt(document.getElementById("courseDay").value),
-      times: document.getElementById("courseTimes").value.split(",").map(t => t.trim())
-    }, { merge: true });
-
-    alert("Kurs gespeichert.");
-  }
-
-  courseSelectEl.addEventListener("change", loadCourse);
-  document.getElementById("saveCourse").addEventListener("click", saveCourse);
-
-
-  /* ---------------------------
-     LOGOUT
-  ---------------------------- */
-  document.getElementById("logoutBtn").addEventListener("click", () => {
-    localStorage.removeItem("adminLoggedIn");
-    window.location.href = "login.html";
+  await db.collection("courses").doc(id).set({
+    title: newCourseTitle.value,
+    label: newCourseLabel.value,
+    formValue: newCourseFormValue.value,
+    description: newCourseDescription.value,
+    price: newCoursePrice.value,
+    day: parseInt(newCourseDay.value),
+    times: newCourseTimes.value.split(",").map(t => t.trim()),
+    image: imagePath
   });
+
+  alert("Kurs erstellt.");
+  loadCourseList();
+};
+
+/* KURS-LISTE LADEN */
+async function loadCourseList() {
+  const select = document.getElementById("courseSelect");
+  select.innerHTML = '<option value="">Bitte auswählen…</option>';
+
+  const snap = await db.collection("courses").get();
+  snap.forEach(doc => {
+    const opt = document.createElement("option");
+    opt.value = doc.id;
+    opt.textContent = doc.data().title;
+    select.appendChild(opt);
+  });
+}
+
+loadCourseList();
+
+/* KURS LADEN */
+courseSelect.onchange = async () => {
+  const id = courseSelect.value;
+  if (!id) return;
+
+  const snap = await db.collection("courses").doc(id).get();
+  const c = snap.data();
+
+  courseTitle.value = c.title;
+  courseLabel.value = c.label;
+  courseFormValue.value = c.formValue;
+  courseDescription.value = c.description;
+  coursePrice.value = c.price;
+  courseDay.value = c.day;
+  courseTimes.value = c.times.join(",");
+
+  if (c.image) {
+    const url = await storage.ref(c.image).getDownloadURL();
+    courseImagePreview.src = url;
+    courseImagePreview.style.display = "block";
+  }
+};
+
+/* KURS SPEICHERN */
+saveCourse.onclick = async () => {
+  const id = courseSelect.value;
+  if (!id) return alert("Bitte Kurs auswählen.");
+
+  let imagePath = null;
+
+  const file = courseImage.files[0];
+  if (file) {
+    const ref = storage.ref(`courses/${id}.jpg`);
+    await ref.put(file);
+    imagePath = `courses/${id}.jpg`;
+  }
+
+  const update = {
+    title: courseTitle.value,
+    label: courseLabel.value,
+    formValue: courseFormValue.value,
+    description: courseDescription.value,
+    price: coursePrice.value,
+    day: parseInt(courseDay.value),
+    times: courseTimes.value.split(",").map(t => t.trim())
+  };
+
+  if (imagePath) update.image = imagePath;
+
+  await db.collection("courses").doc(id).set(update, { merge: true });
+
+  alert("Kurs gespeichert.");
+};
+
+/* LOGOUT */
+logoutBtn.onclick = () => {
+  localStorage.removeItem("adminLoggedIn");
+  window.location.href = "login.html";
+};
 </script>
+
+<script src="admin.js?v=2001"></script>
 
 </body>
 </html>
