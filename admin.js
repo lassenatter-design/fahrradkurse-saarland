@@ -1,3 +1,5 @@
+console.log("ADMIN JS WIRD GELADEN");
+
 document.addEventListener("DOMContentLoaded", () => {
   const adminDate = document.getElementById("adminDate");
   const timeList = document.getElementById("timeList");
@@ -8,20 +10,37 @@ document.addEventListener("DOMContentLoaded", () => {
   const mondayTimes = ["15:00–16:00", "16:00–17:00", "17:00–18:00"];
   const thursdayTimes = ["15:00–16:00", "16:00–17:00", "17:00–18:00"];
 
-  // --- BLOCKED STORAGE ---
-  function getBlocked() {
-    return JSON.parse(localStorage.getItem("blockedSlots") || "[]");
+  // --- FIRESTORE: BLOCKED SLOTS LADEN ---
+  async function getBlocked() {
+    const snapshot = await db.collection("blockedSlots").get();
+    const list = [];
+    snapshot.forEach(doc => list.push(doc.id));
+    return list;
   }
 
-  function saveBlocked(list) {
-    localStorage.setItem("blockedSlots", JSON.stringify(list));
+  // --- FIRESTORE: BLOCKED SLOTS SPEICHERN ---
+  async function saveBlocked(list) {
+    // alles löschen
+    const snap = await db.collection("blockedSlots").get();
+    const batch = db.batch();
+    snap.forEach(doc => batch.delete(doc.ref));
+    await batch.commit();
+
+    // neue Liste speichern
+    const batch2 = db.batch();
+    list.forEach(key => {
+      const ref = db.collection("blockedSlots").doc(key);
+      batch2.set(ref, { blocked: true });
+    });
+    await batch2.commit();
+
     renderBlockedList();
-    applyBlockedToSelect(); // <<< WICHTIG für Handy & Benutzer
+    renderTimes();
   }
 
   // --- ADMIN LISTE ---
-  function renderBlockedList() {
-    const blocked = getBlocked();
+  async function renderBlockedList() {
+    const blocked = await getBlocked();
     blockedList.innerHTML = "";
 
     if (blocked.length === 0) {
@@ -37,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // --- ADMIN ZEITEN ---
-  function renderTimes() {
+  async function renderTimes() {
     timeList.innerHTML = "";
 
     const date = adminDate.value;
@@ -50,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const times = day === 1 ? mondayTimes : thursdayTimes;
-    const blocked = getBlocked();
+    const blocked = await getBlocked();
 
     times.forEach(t => {
       const key = `${date} | ${t}`;
@@ -65,15 +84,14 @@ document.addEventListener("DOMContentLoaded", () => {
         <p>${isBlocked ? "Ausgebucht" : "Verfügbar"}</p>
       `;
 
-      div.addEventListener("click", () => {
-        let list = getBlocked();
+      div.addEventListener("click", async () => {
+        let list = await getBlocked();
         if (isBlocked) {
           list = list.filter(x => x !== key);
         } else {
           list.push(key);
         }
-        saveBlocked(list);
-        renderTimes();
+        await saveBlocked(list);
       });
 
       timeList.appendChild(div);
@@ -82,10 +100,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- ALLES LÖSCHEN ---
   if (clearAllBtn) {
-    clearAllBtn.addEventListener("click", () => {
+    clearAllBtn.addEventListener("click", async () => {
       if (confirm("Alle Sperrungen wirklich löschen?")) {
-        saveBlocked([]);
-        renderTimes();
+        await saveBlocked([]);
       }
     });
   }
@@ -97,36 +114,6 @@ document.addEventListener("DOMContentLoaded", () => {
       window.location.href = "login.html";
     });
   }
-
-  // --- BENUTZER SELECT SPERREN (HANDY FIX!) ---
-  function applyBlockedToSelect() {
-    const select = document.getElementById("zeit");
-    if (!select) return;
-
-    const blocked = getBlocked();
-
-    // Erst alles entsperren
-    [...select.options].forEach(opt => {
-      opt.disabled = false;
-      opt.style.color = "#000";
-    });
-
-    // Dann gesperrte Zeiten deaktivieren
-    blocked.forEach(entry => {
-      const time = entry.split(" | ")[1]; // "15:00–16:00"
-      const option = select.querySelector(`option[value="${time}"]`);
-      if (option) {
-        option.disabled = true;   // <<< HANDY KANN ES NICHT MEHR WÄHLEN
-        option.style.color = "#999";
-      }
-    });
-  }
-
-  // Beim Laden anwenden
-  applyBlockedToSelect();
-
-  // Wenn Admin etwas ändert → Benutzer-Select aktualisieren
-  window.addEventListener("storage", applyBlockedToSelect);
 
   // Start
   renderBlockedList();
