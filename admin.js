@@ -1,8 +1,12 @@
 document.addEventListener("DOMContentLoaded", () => {
+
   const dateInput = document.getElementById("adminDate");
   const timeList = document.getElementById("timeList");
   const blockedList = document.getElementById("blockedList");
   const clearAllBtn = document.getElementById("clearAll");
+
+  const courseSelect = document.getElementById("courseSelect");
+  const deleteCourse = document.getElementById("deleteCourse");
 
   let courses = {};
   let blockedSlots = [];
@@ -10,6 +14,21 @@ document.addEventListener("DOMContentLoaded", () => {
   // Heutiges Datum als Minimum
   const today = new Date().toISOString().split("T")[0];
   if (dateInput) dateInput.setAttribute("min", today);
+
+  /* 🔥 Kurse laden */
+  async function loadCourseList() {
+    if (!courseSelect) return;
+
+    courseSelect.innerHTML = `<option value="">Kurs auswählen…</option>`;
+    const snap = await db.collection("courses").get();
+
+    snap.forEach(doc => {
+      const opt = document.createElement("option");
+      opt.value = doc.id;
+      opt.textContent = doc.data().title;
+      courseSelect.appendChild(opt);
+    });
+  }
 
   /* 🔥 Kurse laden (für Zeitliste) */
   async function loadCourses() {
@@ -55,7 +74,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!date) return;
 
-    // Alle Zeiten aller Kurse sammeln
     const allTimes = new Set();
     Object.values(courses).forEach(c => {
       (c.times || []).forEach(t => allTimes.add(t));
@@ -115,25 +133,30 @@ document.addEventListener("DOMContentLoaded", () => {
     renderBlockedList();
   }
 
+  /* 🔥 Kurs löschen */
+  deleteCourse.onclick = async () => {
+    const id = courseSelect.value;
+    if (!id) return alert("Bitte Kurs auswählen.");
+
+    if (!confirm("Willst du diesen Kurs wirklich löschen?")) return;
+
+    await db.collection("courses").doc(id).delete();
+
+    alert("Kurs gelöscht.");
+    loadCourseList();
+    courseSelect.value = "";
+  };
+
+  /* 🔥 Events */
   if (dateInput) dateInput.addEventListener("input", renderTimeList);
   if (clearAllBtn) clearAllBtn.addEventListener("click", clearAll);
 
-  // Initial
+  /* 🔥 Initial laden */
   (async () => {
+    await loadCourseList();
     await loadCourses();
     await loadBlockedSlots();
     renderTimeList();
   })();
+
 });
-deleteCourse.onclick = async () => {
-  const id = courseSelect.value;
-  if (!id) return alert("Bitte Kurs auswählen.");
-
-  if (!confirm("Willst du diesen Kurs wirklich löschen?")) return;
-
-  await db.collection("courses").doc(id).delete();
-
-  alert("Kurs gelöscht.");
-  loadCourseList();
-  courseSelect.value = "";
-};

@@ -39,10 +39,11 @@
 
 <section class="section">
   <h2>Admin Dashboard</h2>
-  <p class="section-subtitle">Verwalte Inhalte, Kurse, Bilder und Buchungszeiten.</p>
+  <p class="section-subtitle">Verwalte Kurse, Bilder und Buchungszeiten.</p>
 
   <div class="contact-wrapper">
-    <!-- KURS-ERSTELLUNG -->
+
+    <!-- KURS ERSTELLEN -->
     <div class="booking-form">
       <h3>Neuen Kurs erstellen</h3>
 
@@ -78,7 +79,7 @@
       </button>
     </div>
 
-    <!-- KURS-BEARBEITUNG -->
+    <!-- KURS BEARBEITEN -->
     <div class="booking-form">
       <h3>Kurs bearbeiten</h3>
 
@@ -116,8 +117,9 @@
       <button id="saveCourse" class="btn primary" style="margin-top:12px;">
         Kurs speichern
       </button>
+
       <button id="deleteCourse" class="btn secondary" style="margin-top:12px; background:#d9534f;">
-       Kurs löschen
+        Kurs löschen
       </button>
     </div>
 
@@ -148,136 +150,7 @@
   </div>
 </section>
 
-<script>
-/* STARTSEITE */
-async function loadHomepage() {
-  const snap = await db.collection("settings").doc("homepage").get();
-  if (!snap.exists) return;
-
-  const d = snap.data();
-  heroTitle.value = d.heroTitle || "";
-  heroSubtitle.value = d.heroSubtitle || "";
-  seoText.value = d.seoText || "";
-}
-
-saveHomepage.onclick = async () => {
-  await db.collection("settings").doc("homepage").set({
-    heroTitle: heroTitle.value,
-    heroSubtitle: heroSubtitle.value,
-    seoText: seoText.value
-  }, { merge: true });
-
-  alert("Startseite gespeichert.");
-};
-
-loadHomepage();
-
-/* KURS-ERSTELLUNG */
-createCourse.onclick = async () => {
-  const id = newCourseId.value.trim();
-  if (!id) return alert("Bitte Kurs-ID eingeben.");
-
-  let imagePath = "";
-
-  const file = newCourseImage.files[0];
-  if (file) {
-    const ref = storage.ref(`courses/${id}.jpg`);
-    await ref.put(file);
-    imagePath = `courses/${id}.jpg`;
-  }
-
-  await db.collection("courses").doc(id).set({
-    title: newCourseTitle.value,
-    label: newCourseLabel.value,
-    formValue: newCourseFormValue.value,
-    description: newCourseDescription.value,
-    price: newCoursePrice.value,
-    day: parseInt(newCourseDay.value),
-    times: newCourseTimes.value.split(",").map(t => t.trim()),
-    image: imagePath
-  });
-
-  alert("Kurs erstellt.");
-  loadCourseList();
-};
-
-/* KURS-LISTE LADEN */
-async function loadCourseList() {
-  const select = document.getElementById("courseSelect");
-  select.innerHTML = '<option value="">Bitte auswählen…</option>';
-
-  const snap = await db.collection("courses").get();
-  snap.forEach(doc => {
-    const opt = document.createElement("option");
-    opt.value = doc.id;
-    opt.textContent = doc.data().title;
-    select.appendChild(opt);
-  });
-}
-
-loadCourseList();
-
-/* KURS LADEN */
-courseSelect.onchange = async () => {
-  const id = courseSelect.value;
-  if (!id) return;
-
-  const snap = await db.collection("courses").doc(id).get();
-  const c = snap.data();
-
-  courseTitle.value = c.title;
-  courseLabel.value = c.label;
-  courseFormValue.value = c.formValue;
-  courseDescription.value = c.description;
-  coursePrice.value = c.price;
-  courseDay.value = c.day;
-  courseTimes.value = c.times.join(",");
-
-  if (c.image) {
-    const url = await storage.ref(c.image).getDownloadURL();
-    courseImagePreview.src = url;
-    courseImagePreview.style.display = "block";
-  }
-};
-
-/* KURS SPEICHERN */
-saveCourse.onclick = async () => {
-  const id = courseSelect.value;
-  if (!id) return alert("Bitte Kurs auswählen.");
-
-  let imagePath = null;
-
-  const file = courseImage.files[0];
-  if (file) {
-    const ref = storage.ref(`courses/${id}.jpg`);
-    await ref.put(file);
-    imagePath = `courses/${id}.jpg`;
-  }
-
-  const update = {
-    title: courseTitle.value,
-    label: courseLabel.value,
-    formValue: courseFormValue.value,
-    description: courseDescription.value,
-    price: coursePrice.value,
-    day: parseInt(courseDay.value),
-    times: courseTimes.value.split(",").map(t => t.trim())
-  };
-
-  if (imagePath) update.image = imagePath;
-
-  await db.collection("courses").doc(id).set(update, { merge: true });
-
-  alert("Kurs gespeichert.");
-};
-
-/* LOGOUT */
-logoutBtn.onclick = () => {
-  localStorage.removeItem("adminLoggedIn");
-  window.location.href = "login.html";
-};
-</script>
-
+<!-- ADMIN LOGIK -->
 <script src="admin.js?v=2001"></script>
 
 </body>
