@@ -1,121 +1,139 @@
-console.log("ADMIN JS WIRD GELADEN");
-
 document.addEventListener("DOMContentLoaded", () => {
-  const adminDate = document.getElementById("adminDate");
+  const dateInput = document.getElementById("adminDate");
   const timeList = document.getElementById("timeList");
   const blockedList = document.getElementById("blockedList");
   const clearAllBtn = document.getElementById("clearAll");
-  const logoutBtn = document.getElementById("logoutBtn");
 
-  const mondayTimes = ["15:00–16:00", "16:00–17:00", "17:00–18:00"];
-  const thursdayTimes = ["15:00–16:00", "16:00–17:00", "17:00–18:00"];
+  let courses = {};
+  let blockedSlots = [];
 
-  // --- FIRESTORE: BLOCKED SLOTS LADEN ---
-  async function getBlocked() {
-    const snapshot = await db.collection("blockedSlots").get();
-    const list = [];
-    snapshot.forEach(doc => list.push(doc.id));
-    return list;
+  // Heutiges Datum als Minimum
+  const today = new Date().toISOString().split("T")[0];
+  if (dateInput) dateInput.setAttribute("min", today);
+
+  /* 🔥 Kurse laden (für Zeitliste) */
+  async function loadCourses() {
+    const snap = await db.collection("courses").get();
+    snap.forEach(doc => {
+      const c = doc.data();
+      courses[doc.id] = c;
+    });
   }
 
-  // --- FIRESTORE: BLOCKED SLOTS SPEICHERN ---
-  async function saveBlocked(list) {
-    // alles löschen
+  /* 🔥 Gesperrte Slots laden */
+  async function loadBlockedSlots() {
+    const snap = await db.collection("blockedSlots").get();
+    blockedSlots = snap.docs.map(d => d.id);
+    renderBlockedList();
+  }
+
+  /* 🔥 Gesperrte Liste anzeigen */
+  function renderBlockedList() {
+    if (!blockedList) return;
+    blockedList.innerHTML = "";
+
+    if (blockedSlots.length === 0) {
+      const li = document.createElement("li");
+      li.textContent = "Keine gesperrten Zeiten.";
+      blockedList.appendChild(li);
+      return;
+    }
+
+    blockedSlots.sort().forEach(id => {
+      const li = document.createElement("li");
+      li.textContent = id;
+      blockedList.appendChild(li);
+    });
+  }
+
+  /* 🔥 Zeitliste für gewähltes Datum anzeigen */
+  async function renderTimeList() {
+    if (!dateInput || !timeList) return;
+
+    const date = dateInput.value;
+    timeList.innerHTML = "";
+
+    if (!date) return;
+
+    // Alle Zeiten aller Kurse sammeln
+    const allTimes = new Set();
+    Object.values(courses).forEach(c => {
+      (c.times || []).forEach(t => allTimes.add(t));
+    });
+
+    if (allTimes.size === 0) {
+      timeList.innerHTML = "<p>Keine Zeiten definiert.</p>";
+      return;
+    }
+
+    Array.from(allTimes).sort().forEach(time => {
+      const slotId = `${date} | ${time}`;
+      const isBlocked = blockedSlots.includes(slotId);
+
+      const card = document.createElement("div");
+      card.classList.add("card");
+      card.style.cursor = "pointer";
+
+      card.innerHTML = `
+        <h4>${time}</h4>
+        <p>${isBlocked ? "Gesperrt" : "Frei"}</p>
+      `;
+
+      card.onclick = () => toggleSlot(slotId);
+      timeList.appendChild(card);
+    });
+  }
+
+  /* 🔥 Slot sperren / freigeben */
+  async function toggleSlot(slotId) {
+    const ref = db.collection("blockedSlots").doc(slotId);
+    const exists = blockedSlots.includes(slotId);
+
+    if (exists) {
+      await ref.delete();
+      blockedSlots = blockedSlots.filter(id => id !== slotId);
+    } else {
+      await ref.set({ createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+      blockedSlots.push(slotId);
+    }
+
+    renderTimeList();
+    renderBlockedList();
+  }
+
+  /* 🔥 Alle Sperrungen löschen */
+  async function clearAll() {
+    if (!confirm("Wirklich alle Sperrungen löschen?")) return;
+
     const snap = await db.collection("blockedSlots").get();
     const batch = db.batch();
     snap.forEach(doc => batch.delete(doc.ref));
     await batch.commit();
 
-    // neue Liste speichern
-    const batch2 = db.batch();
-    list.forEach(key => {
-      const ref = db.collection("blockedSlots").doc(key);
-      batch2.set(ref, { blocked: true });
-    });
-    await batch2.commit();
-
+    blockedSlots = [];
+    renderTimeList();
     renderBlockedList();
-    renderTimes();
   }
 
-  // --- ADMIN LISTE ---
-  async function renderBlockedList() {
-    const blocked = await getBlocked();
-    blockedList.innerHTML = "";
+  if (dateInput) dateInput.addEventListener("input", renderTimeList);
+  if (clearAllBtn) clearAllBtn.addEventListener("click", clearAll);
 
-    if (blocked.length === 0) {
-      blockedList.innerHTML = "<li>Keine gesperrten Zeiten.</li>";
-      return;
-    }
-
-    blocked.forEach(entry => {
-      const li = document.createElement("li");
-      li.textContent = entry;
-      blockedList.appendChild(li);
-    });
-  }
-
-  // --- ADMIN ZEITEN ---
-  async function renderTimes() {
-    timeList.innerHTML = "";
-
-    const date = adminDate.value;
-    if (!date) return;
-
-    const day = new Date(date).getDay();
-    if (day !== 1 && day !== 4) {
-      timeList.innerHTML = "<p>Nur Montag und Donnerstag sind buchbar.</p>";
-      return;
-    }
-
-    const times = day === 1 ? mondayTimes : thursdayTimes;
-    const blocked = await getBlocked();
-
-    times.forEach(t => {
-      const key = `${date} | ${t}`;
-      const isBlocked = blocked.includes(key);
-
-      const div = document.createElement("div");
-      div.className = "card";
-      div.style.cursor = "pointer";
-      div.style.borderColor = isBlocked ? "#ff3b30" : "#e5e5ea";
-      div.innerHTML = `
-        <h3>${t}</h3>
-        <p>${isBlocked ? "Ausgebucht" : "Verfügbar"}</p>
-      `;
-
-      div.addEventListener("click", async () => {
-        let list = await getBlocked();
-        if (isBlocked) {
-          list = list.filter(x => x !== key);
-        } else {
-          list.push(key);
-        }
-        await saveBlocked(list);
-      });
-
-      timeList.appendChild(div);
-    });
-  }
-
-  // --- ALLES LÖSCHEN ---
-  if (clearAllBtn) {
-    clearAllBtn.addEventListener("click", async () => {
-      if (confirm("Alle Sperrungen wirklich löschen?")) {
-        await saveBlocked([]);
-      }
-    });
-  }
-
-  // --- LOGOUT ---
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", () => {
-      localStorage.removeItem("adminLoggedIn");
-      window.location.href = "login.html";
-    });
-  }
-
-  // Start
-  renderBlockedList();
-  if (adminDate) adminDate.addEventListener("input", renderTimes);
+  // Initial
+  (async () => {
+    await loadCourses();
+    await loadBlockedSlots();
+    renderTimeList();
+  })();
 });
+deleteCourse.onclick = async () => {
+  const id = courseSelect.value;
+  if (!id) return alert("Bitte Kurs auswählen.");
+
+  if (!confirm("Willst du diesen Kurs wirklich löschen?")) return;
+
+  await db.collection("courses").doc(id).delete();
+
+  alert("Kurs gelöscht.");
+  loadCourseList();
+  courseSelect.value = "";
+};

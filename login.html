@@ -4,29 +4,122 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Login – Fahrradkurse Saarland</title>
-  <link rel="stylesheet" href="style.css?v=1001">
+
+  <link rel="stylesheet" href="style.css?v=2001">
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyD8dM3SYRmHI52aJnOIVLCkfbHAmM5h678",
+      authDomain: "bike-kurse.firebaseapp.com",
+      projectId: "bike-kurse",
+      storageBucket: "bike-kurse.firebasestorage.app",
+      messagingSenderId: "581675622978",
+      appId: "1:581675622978:web:9e0c051d13f5a1581083db",
+      measurementId: "G-PYMPVZ3753"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+  </script>
+
+  <style>
+    body {
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      height:100vh;
+      background:#f5f5f5;
+      font-family:Arial;
+    }
+    .login-box {
+      background:white;
+      padding:30px;
+      border-radius:12px;
+      width:320px;
+      box-shadow:0 4px 20px rgba(0,0,0,0.1);
+    }
+    .login-box h2 {
+      margin-bottom:20px;
+      text-align:center;
+    }
+    .login-box input {
+      width:100%;
+      padding:10px;
+      margin-bottom:12px;
+      border-radius:6px;
+      border:1px solid #ccc;
+    }
+    .login-box button {
+      width:100%;
+      padding:12px;
+      background:#007bff;
+      color:white;
+      border:none;
+      border-radius:6px;
+      cursor:pointer;
+      font-size:16px;
+    }
+    .login-box button:hover {
+      background:#005fcc;
+    }
+    .link {
+      text-align:center;
+      margin-top:10px;
+      font-size:14px;
+      cursor:pointer;
+      color:#007bff;
+    }
+  </style>
 </head>
+
 <body>
-  <section class="section" style="max-width:420px;">
-    <h2>Admin Login</h2>
-    <p class="section-subtitle">Nur für Administratoren.</p>
 
-    <div class="booking-form">
-      <form id="loginForm">
-        <label>Benutzername</label>
-        <input type="text" id="username" required>
+<div class="login-box">
+  <h2>Admin Login</h2>
 
-        <label>Passwort</label>
-        <input type="password" id="password" required>
+  <input type="email" id="email" placeholder="E-Mail">
+  <input type="password" id="password" placeholder="Passwort">
 
-        <button type="submit" class="submit-btn">Einloggen</button>
-        <p id="loginError" style="color:#ff3b30; margin-top:10px; display:none;">
-          Benutzername oder Passwort falsch.
-        </p>
-      </form>
-    </div>
-  </section>
+  <button id="loginBtn">Login</button>
 
-  <script src="auth.js?v=1001"></script>
+  <div class="link" id="resetBtn">Passwort vergessen?</div>
+</div>
+
+<script>
+  // LOGIN
+  loginBtn.onclick = async () => {
+    const email = email.value.trim();
+    const pass = password.value.trim();
+
+    try {
+      await auth.signInWithEmailAndPassword(email, pass);
+
+      // Admin-Session speichern
+      localStorage.setItem("adminLoggedIn", "true");
+
+      window.location.href = "admin.html";
+    } catch (err) {
+      alert("Login fehlgeschlagen: " + err.message);
+    }
+  };
+
+  // PASSWORT ZURÜCKSETZEN
+  resetBtn.onclick = async () => {
+    const emailAddress = email.value.trim();
+    if (!emailAddress) return alert("Bitte E-Mail eingeben.");
+
+    try {
+      await auth.sendPasswordResetEmail(emailAddress);
+      alert("Passwort-Reset wurde gesendet.");
+    } catch (err) {
+      alert("Fehler: " + err.message);
+    }
+  };
+</script>
+
 </body>
 </html>

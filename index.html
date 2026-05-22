@@ -4,21 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- SEO Grunddaten -->
     <title>Fahrradkurse Saarland – Sicher Fahrradfahren lernen</title>
     <meta name="description" content="Fahrradkurse im Saarland für Kinder, Erwachsene und Senioren. Sicher Fahrradfahren lernen, E‑Bike Training, Technik‑Workshops und individuelle Betreuung.">
-    <meta name="keywords" content="Fahrradkurs Saarland, Fahrrad fahren lernen, E-Bike Kurs Saarland, Fahrradtraining Saarbrücken, Fahrradkurs Kinder, Fahrradkurs Erwachsene, Fahrradschule Saarland">
-
-    <!-- Open Graph -->
-    <meta property="og:title" content="Fahrradkurse Saarland – Sicher Fahrradfahren lernen">
-    <meta property="og:description" content="Individuelle Fahrradkurse für Kinder, Erwachsene & Senioren. E‑Bike Sicherheit, Technik‑Workshops und persönliche Betreuung.">
-    <meta property="og:type" content="website">
 
     <link rel="stylesheet" href="style.css?v=999999">
 
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
 
     <script>
       const firebaseConfig = {
@@ -33,6 +27,7 @@
 
       firebase.initializeApp(firebaseConfig);
       const db = firebase.firestore();
+      const storage = firebase.storage();
     </script>
 </head>
 
@@ -66,28 +61,7 @@
         <h2>Angebote</h2>
         <p class="section-subtitle">Wähle den Kurs, der zu dir passt.</p>
 
-        <div id="courseCards" class="cards">
-            <!-- Dynamisch aus Firebase -->
-        </div>
-    </section>
-
-    <!-- VORTEILE -->
-    <section id="vorteile" class="section section-alt">
-        <h2>Warum meine Kurse?</h2>
-        <div class="features">
-            <div class="feature">
-                <h3>Persönlich & lokal</h3>
-                <p>Kurse direkt im Saarland – flexibel & nah.</p>
-            </div>
-            <div class="feature">
-                <h3>Sicherheit zuerst</h3>
-                <p>Fokus auf Verkehrssicherheit & richtige Technik.</p>
-            </div>
-            <div class="feature">
-                <h3>Individuelle Betreuung</h3>
-                <p>Keine Massenkurse – ich nehme mir Zeit.</p>
-            </div>
-        </div>
+        <div id="courseCards" class="cards"></div>
     </section>
 
     <!-- PREISE -->
@@ -95,9 +69,7 @@
         <h2>Preise</h2>
         <p class="section-subtitle">Transparente Preise – ohne versteckte Kosten.</p>
 
-        <div class="pricing" id="pricingCards">
-            <!-- Dynamisch aus Firebase -->
-        </div>
+        <div class="pricing" id="pricingCards"></div>
     </section>
 
     <!-- SEO TEXT -->
@@ -109,48 +81,40 @@
     <!-- KONTAKT -->
     <section id="kontakt" class="section section-alt">
         <h2>Kontakt</h2>
-        <p class="section-subtitle">Schreib mir für Termine oder Fragen.</p>
 
         <div class="contact-wrapper">
-            <form action="https://formspree.io/f/xojbevoq" method="POST" class="booking-form">
+            <form id="bookingForm" class="booking-form">
 
                 <h2 class="form-title">Verbindliche Anmeldung – Fahrradkurs</h2>
 
                 <label>Name</label>
-                <input type="text" name="name" required>
+                <input type="text" id="b_name" required>
 
                 <label>E-Mail</label>
-                <input type="email" name="email" required>
+                <input type="email" id="b_email" required>
 
                 <label>Telefonnummer</label>
-                <input type="text" name="phone" required>
+                <input type="text" id="b_phone" required>
 
                 <label>Kurs auswählen</label>
-                <select name="course" id="courseSelectPublic" required>
+                <select id="courseSelectPublic" required>
                     <option value="">Bitte auswählen…</option>
                 </select>
 
                 <label>Datum</label>
-                <input type="date" id="datePicker" name="date" required min="">
+                <input type="date" id="datePicker" required>
 
                 <label>Uhrzeit</label>
-                <select id="timePicker" name="time" required></select>
+                <select id="timePicker" required></select>
 
                 <label class="checkbox">
-                    <input type="checkbox" name="verbindlich" required>
+                    <input type="checkbox" id="b_confirm" required>
                     Ich melde mich verbindlich an und zahle bar vor Ort.
                 </label>
 
                 <button type="submit" class="submit-btn">Jetzt verbindlich anmelden</button>
 
             </form>
-
-            <div class="contact-info">
-                <h3>Direkter Kontakt</h3>
-                <p><strong>E‑Mail:</strong> social.pro.management.ln@gmail.com</p>
-                <p><strong>Instagram:</strong> @fahrradkurse.saarland</p>
-                <p><strong>Region:</strong> Saarland (Saarbrücken, Illingen, Umgebung)</p>
-            </div>
         </div>
     </section>
 
@@ -159,24 +123,24 @@
         <a href="#top" class="back-to-top">Nach oben ↑</a>
     </footer>
 
-    <!-- DYNAMISCHE INHALTE LADEN -->
+    <!-- DYNAMISCHE INHALTE -->
     <script>
     document.addEventListener("DOMContentLoaded", async () => {
 
-        /* 🔥 STARTSEITE LADEN */
+        /* 🔥 STARTSEITE */
         async function loadHomepageContent() {
             const snap = await db.collection("settings").doc("homepage").get();
             if (!snap.exists) return;
 
             const d = snap.data();
-            document.getElementById("heroTitle").textContent = d.heroTitle;
-            document.getElementById("heroSubtitle").textContent = d.heroSubtitle;
-            document.getElementById("seoText").textContent = d.seoText;
+            heroTitle.textContent = d.heroTitle;
+            heroSubtitle.textContent = d.heroSubtitle;
+            seoText.textContent = d.seoText;
         }
 
-        /* 🔥 KURSE FÜR FORMULAR LADEN */
+        /* 🔥 FORMULAR-KURSE */
         async function loadCoursesForForm() {
-            const select = document.getElementById("courseSelectPublic");
+            const select = courseSelectPublic;
             select.innerHTML = '<option value="">Bitte auswählen…</option>';
 
             const snapshot = await db.collection("courses").get();
@@ -189,33 +153,41 @@
             });
         }
 
-        /* 🔥 ANGEBOTE-KARTEN LADEN */
+        /* 🔥 ANGEBOTE-KARTEN MIT BILD */
         async function loadCourseCards() {
-            const container = document.getElementById("courseCards");
+            const container = courseCards;
             container.innerHTML = "";
 
             const snapshot = await db.collection("courses").get();
-            snapshot.forEach(doc => {
+            for (const doc of snapshot.docs) {
                 const c = doc.data();
+
+                let imageUrl = "";
+                if (c.image) {
+                    try {
+                        imageUrl = await storage.ref(c.image).getDownloadURL();
+                    } catch {
+                        imageUrl = "fallback.jpg";
+                    }
+                }
 
                 const card = document.createElement("article");
                 card.classList.add("card");
 
                 card.innerHTML = `
+                    <img src="${imageUrl}" class="card-img" alt="${c.title}">
                     <h3>${c.title}</h3>
                     <p>${c.description}</p>
-                    <ul>
-                        ${c.times.map(t => `<li>${t}</li>`).join("")}
-                    </ul>
+                    <ul>${c.times.map(t => `<li>${t}</li>`).join("")}</ul>
                 `;
 
                 container.appendChild(card);
-            });
+            }
         }
 
-        /* 🔥 PREISE LADEN */
+        /* 🔥 PREISE */
         async function loadPricing() {
-            const container = document.getElementById("pricingCards");
+            const container = pricingCards;
             container.innerHTML = "";
 
             const snapshot = await db.collection("courses").get();
@@ -234,6 +206,26 @@
                 container.appendChild(card);
             });
         }
+
+        /* 🔥 BUCHUNG SPEICHERN */
+        bookingForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const booking = {
+                name: b_name.value,
+                email: b_email.value,
+                phone: b_phone.value,
+                course: courseSelectPublic.value,
+                date: datePicker.value,
+                time: timePicker.value,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            await db.collection("bookings").add(booking);
+
+            alert("Buchung erfolgreich gespeichert!");
+            bookingForm.reset();
+        });
 
         /* 🔥 ALLES LADEN */
         loadHomepageContent();

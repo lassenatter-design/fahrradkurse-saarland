@@ -1,102 +1,100 @@
 document.addEventListener("DOMContentLoaded", () => {
   const dateInput = document.getElementById("datePicker");
   const timeSelect = document.getElementById("timePicker");
-  const courseSelect = document.querySelector("select[name='course']");
+  const courseSelect = document.getElementById("courseSelectPublic");
 
-  // Heutiges Datum blockieren
+  let courses = {};        // Kurse aus Firestore
+  let blockedSlots = [];   // Gesperrte Slots aus Firestore
+
+  /* -----------------------------------------
+     1. Mindestdatum setzen (heute)
+  ----------------------------------------- */
   const today = new Date().toISOString().split("T")[0];
   dateInput.setAttribute("min", today);
 
-  // Firestore lesen
-  async function getBlocked() {
-    const snapshot = await db.collection("blockedSlots").get();
-    const list = [];
-    snapshot.forEach(doc => list.push(doc.id));
-    return list;
+  /* -----------------------------------------
+     2. Kurse aus Firestore laden
+  ----------------------------------------- */
+  async function loadCourses() {
+    const snapshot = await db.collection("courses").get();
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      courses[data.formValue] = data;
+    });
   }
 
-  // Welcher Kurs → welcher Tag?
-  function getAllowedDayForCourse() {
-    const course = courseSelect.value;
-
-    if (course === "Kinderkurs") return 1; // Montag
-    if (course === "Erwachsene-Anfaenger") return 4; // Donnerstag
-
-    return null;
+  /* -----------------------------------------
+     3. Gesperrte Slots laden
+  ----------------------------------------- */
+  async function loadBlockedSlots() {
+    const snap = await db.collection("blockedSlots").get();
+    blockedSlots = snap.docs.map(d => d.id);
   }
 
+  /* -----------------------------------------
+     4. Uhrzeiten dynamisch anzeigen
+  ----------------------------------------- */
   async function updateTimes() {
     const date = dateInput.value;
-    const course = courseSelect.value;
+    const selectedCourseValue = courseSelect.value;
 
-    if (!date || !course) return;
-
-    const selectedDay = new Date(date).getDay(); // 1 = Montag, 4 = Donnerstag
-    const allowedDay = getAllowedDayForCourse();
-
-    // ❌ Kurs hat festen Tag → Datum MUSS passen
-    if (allowedDay !== null && selectedDay !== allowedDay) {
-      alert("Für diesen Kurs ist nur ein bestimmter Tag buchbar.");
-
-      // Uhrzeiten komplett deaktivieren
-      timeSelect.disabled = true;
-
-      // Alle Optionen verstecken
-      [...timeSelect.options].forEach(opt => {
-        opt.style.display = "none";
-      });
-
-      // Auswahl zurücksetzen
-      timeSelect.value = "";
-
-      return; // aber erst NACHDEM wir alles ausgeblendet haben
-    }
-
-    // ❌ Falls später mehr Kurse kommen → nur Mo/Do
-    if (allowedDay === null && selectedDay !== 1 && selectedDay !== 4) {
-      alert("Nur Montag und Donnerstag sind buchbar.");
-
-      timeSelect.disabled = true;
-      [...timeSelect.options].forEach(opt => opt.style.display = "none");
-      timeSelect.value = "";
+    if (!date || !selectedCourseValue) {
+      timeSelect.innerHTML = "";
       return;
     }
 
-    // Wenn wir hier sind → Tag ist gültig
+    const course = courses[selectedCourseValue];
+    if (!course) return;
+
+    const selectedDay = new Date(date).getDay(); // 1 = Montag, 4 = Donnerstag
+
+    // ❌ Falscher Tag
+    if (selectedDay !== course.day) {
+      timeSelect.innerHTML = "";
+      timeSelect.disabled = true;
+
+      alert(
+        `Dieser Kurs ist nur am ${
+          course.day === 1 ? "Montag" : "Donnerstag"
+        } buchbar.`
+      );
+
+      return;
+    }
+
+    // ✔ Richtiger Tag → Uhrzeiten anzeigen
     timeSelect.disabled = false;
+    timeSelect.innerHTML = "";
 
-    const blocked = await getBlocked();
+    course.times.forEach(time => {
+      const option = document.createElement("option");
+      option.value = time;
+      option.textContent = time;
 
-    // Alle Optionen verstecken
-    [...timeSelect.options].forEach(opt => {
-      opt.style.display = "none";
-      opt.disabled = false;
-      opt.style.color = "#000";
-    });
-
-    // Nur passende Optionen anzeigen
-    [...timeSelect.options].forEach(opt => {
-      if (parseInt(opt.dataset.day) === selectedDay) {
-        opt.style.display = "block";
+      // Prüfen, ob gesperrt
+      const slotId = `${date} | ${time}`;
+      if (blockedSlots.includes(slotId)) {
+        option.disabled = true;
+        option.style.color = "#999";
       }
-    });
 
-    // Gesperrte Zeiten deaktivieren
-    blocked.forEach(entry => {
-      const [blockedDate, blockedTime] = entry.split(" | ");
-      if (blockedDate === date) {
-        const option = [...timeSelect.options].find(o => o.value === blockedTime);
-        if (option) {
-          option.disabled = true;
-          option.style.color = "#999";
-        }
-      }
+      timeSelect.appendChild(option);
     });
-
-    // Auswahl zurücksetzen
-    timeSelect.value = "";
   }
 
+  /* -----------------------------------------
+     5. Events
+  ----------------------------------------- */
   dateInput.addEventListener("input", updateTimes);
   courseSelect.addEventListener("input", updateTimes);
+
+  /* -----------------------------------------
+     6. Initialisierung
+  ----------------------------------------- */
+  async function init() {
+    await loadCourses();
+    await loadBlockedSlots();
+  }
+
+  init();
 });
