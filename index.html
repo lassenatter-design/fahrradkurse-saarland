@@ -46,8 +46,8 @@
         </nav>
 
         <div class="hero-content">
-            <h1 id="heroTitle">Lade...</h1>
-            <p id="heroSubtitle">Bitte warten...</p>
+            <h1>Fahrradkurse im Saarland</h1>
+            <p>Sicher Fahrradfahren lernen – für Kinder, Erwachsene & Senioren.</p>
 
             <div class="hero-buttons">
                 <a href="#angebote" class="btn primary">Kurse ansehen</a>
@@ -75,7 +75,10 @@
     <!-- SEO TEXT -->
     <section id="seo-text" class="section">
         <h2>Fahrradkurse im Saarland – sicher & individuell</h2>
-        <p id="seoText">Lade...</p>
+        <p>
+            Fahrradkurse Saarland bietet individuelle Trainings für Kinder, Erwachsene und Senioren. 
+            Sicher Fahrradfahren lernen, Technik verbessern und selbstbewusst im Straßenverkehr bewegen.
+        </p>
     </section>
 
     <!-- KONTAKT -->
@@ -126,17 +129,6 @@
     <!-- DYNAMISCHE INHALTE -->
     <script>
     document.addEventListener("DOMContentLoaded", async () => {
-
-        /* 🔥 STARTSEITE */
-        async function loadHomepageContent() {
-            const snap = await db.collection("settings").doc("homepage").get();
-            if (!snap.exists) return;
-
-            const d = snap.data();
-            heroTitle.textContent = d.heroTitle;
-            heroSubtitle.textContent = d.heroSubtitle;
-            seoText.textContent = d.seoText;
-        }
 
         /* 🔥 FORMULAR-KURSE */
         async function loadCoursesForForm() {
@@ -228,7 +220,6 @@
         });
 
         /* 🔥 ALLES LADEN */
-        loadHomepageContent();
         loadCoursesForForm();
         loadCourseCards();
         loadPricing();
