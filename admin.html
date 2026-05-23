@@ -46,6 +46,7 @@
       <button class="nav-btn" onclick="scrollToSection('create')">Kurs erstellen</button>
       <button class="nav-btn" onclick="scrollToSection('edit')">Kurs bearbeiten</button>
       <button class="nav-btn" onclick="scrollToSection('times')">Zeiten sperren</button>
+      <button class="nav-btn" onclick="scrollToSection('bookings')">Buchungen</button>
     </nav>
     <button id="logoutBtn" class="logout-btn">Logout</button>
   </aside>
@@ -135,6 +136,16 @@
       <button id="clearAll" class="btn danger">Alle Sperrungen löschen</button>
     </section>
 
+    <!-- BUCHUNGSÜBERSICHT -->
+    <section id="bookings" class="card">
+      <h2>Buchungsübersicht</h2>
+
+      <label>Datum filtern</label>
+      <input id="bookingDateFilter" type="date">
+
+      <ul id="bookingList"></ul>
+    </section>
+
   </main>
 
 </div>
@@ -145,7 +156,6 @@ function scrollToSection(id) {
 }
 </script>
 
-<!-- WICHTIG: admin.js NUR EINMAL laden -->
 <script src="admin.js"></script>
 
 </body>

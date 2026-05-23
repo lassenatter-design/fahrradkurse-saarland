@@ -29,6 +29,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const blockedList = document.getElementById("blockedList");
   const clearAllBtn = document.getElementById("clearAll");
 
+  const bookingDateFilter = document.getElementById("bookingDateFilter");
+  const bookingList = document.getElementById("bookingList");
+
   let courses = {};
   let blockedSlots = [];
 
@@ -199,12 +202,43 @@ document.addEventListener("DOMContentLoaded", () => {
     renderBlockedList();
   }
 
-  if (dateInput) dateInput.addEventListener("input", renderTimeList);
-  if (clearAllBtn) clearAllBtn.addEventListener("click", clearAll);
+  /* 🔥 BUCHUNGEN LADEN */
+  async function loadBookings(date = null) {
+    let ref = db.collection("bookings").orderBy("createdAt", "desc");
+
+    if (date) {
+      ref = ref.where("date", "==", date);
+    }
+
+    const snap = await ref.get();
+
+    bookingList.innerHTML = "";
+
+    snap.forEach(doc => {
+      const b = doc.data();
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <strong>${b.name}</strong> (${b.email})<br>
+        Kurs: ${b.courseId}<br>
+        Datum: ${b.date} – ${b.time}<br>
+        Telefon: ${b.phone}<br>
+        <small>${b.createdAt?.toDate().toLocaleString()}</small>
+      `;
+      bookingList.appendChild(li);
+    });
+  }
+
+  /* 🔥 FILTER */
+  if (bookingDateFilter) {
+    bookingDateFilter.addEventListener("change", e => {
+      loadBookings(e.target.value);
+    });
+  }
 
   /* 🔥 LOGOUT */
   logoutBtn.onclick = () => {
     localStorage.removeItem("adminLoggedIn");
+    firebase.auth().signOut();
     window.location.href = "login.html";
   };
 
@@ -213,6 +247,7 @@ document.addEventListener("DOMContentLoaded", () => {
     await loadCourseList();
     await loadCourses();
     await loadBlockedSlots();
+    await loadBookings();
     renderTimeList();
   })();
 

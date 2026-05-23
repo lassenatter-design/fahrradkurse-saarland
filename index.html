@@ -199,7 +199,40 @@
             });
         }
 
-        /* 🔥 BUCHUNG SPEICHERN */
+        /* 🔥 MAIL-FUNKTION (Admin + Käufer) */
+        async function sendBookingMail(data) {
+          await fetch("https://formspree.io/f/DEINE_FORM_ID", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              _subject: "Neue Buchung eingegangen",
+              _replyto: data.email, 
+              _message: `
+Hallo ${data.name},
+
+vielen Dank für deine verbindliche Buchung!
+
+Hier deine Bestätigung:
+
+Kurs: ${data.course}
+Datum: ${data.date}
+Uhrzeit: ${data.time}
+Telefon: ${data.phone}
+
+Wir freuen uns auf dich!
+Dein Fahrradkurs-Team Saarland
+              `,
+              name: data.name,
+              email: data.email,
+              phone: data.phone,
+              course: data.course,
+              date: data.date,
+              time: data.time
+            })
+          });
+        }
+
+        /* 🔥 BUCHUNG SPEICHERN + MAIL SENDEN */
         bookingForm.addEventListener("submit", async (e) => {
             e.preventDefault();
 
@@ -215,7 +248,9 @@
 
             await db.collection("bookings").add(booking);
 
-            alert("Buchung erfolgreich gespeichert!");
+            await sendBookingMail(booking);
+
+            alert("Buchung erfolgreich! Du erhältst gleich eine Bestätigung.");
             bookingForm.reset();
         });
 
