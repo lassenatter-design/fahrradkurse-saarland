@@ -158,5 +158,9 @@ document.addEventListener("DOMContentLoaded", () => {
     await loadBlockedSlots();
     renderTimeList();
   })();
+logoutBtn.onclick = () => {
+  localStorage.removeItem("adminLoggedIn");
+  window.location.href = "login.html";
+};
 
 });
