@@ -5,14 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Fahrradkurse Saarland – Sicher Fahrradfahren lernen</title>
-    <meta name="description" content="Fahrradkurse im Saarland für Kinder, Erwachsene und Senioren. Sicher Fahrradfahren lernen, E‑Bike Training, Technik‑Workshops und individuelle Betreuung.">
+    <meta name="description" content="Fahrradkurse im Saarland für Kinder, Erwachsene und Senioren.">
 
     <link rel="stylesheet" href="style.css?v=999999">
 
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
 
     <script>
       const firebaseConfig = {
@@ -27,8 +26,14 @@
 
       firebase.initializeApp(firebaseConfig);
       const db = firebase.firestore();
-      const storage = firebase.storage();
     </script>
+
+    <!-- EmailJS -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+        emailjs.init("UgscTCklZAVv1xR7p");
+    </script>
+
 </head>
 
 <body>
@@ -39,7 +44,6 @@
             <div class="logo">Fahrradkurse<span>Saarland</span></div>
             <ul class="nav-links">
                 <li><a href="#angebote">Angebote</a></li>
-                <li><a href="#vorteile">Warum ich?</a></li>
                 <li><a href="#preise">Preise</a></li>
                 <li><a href="#kontakt">Kontakt</a></li>
             </ul>
@@ -70,15 +74,6 @@
         <p class="section-subtitle">Transparente Preise – ohne versteckte Kosten.</p>
 
         <div class="pricing" id="pricingCards"></div>
-    </section>
-
-    <!-- SEO TEXT -->
-    <section id="seo-text" class="section">
-        <h2>Fahrradkurse im Saarland – sicher & individuell</h2>
-        <p>
-            Fahrradkurse Saarland bietet individuelle Trainings für Kinder, Erwachsene und Senioren. 
-            Sicher Fahrradfahren lernen, Technik verbessern und selbstbewusst im Straßenverkehr bewegen.
-        </p>
     </section>
 
     <!-- KONTAKT -->
@@ -126,11 +121,11 @@
         <a href="#top" class="back-to-top">Nach oben ↑</a>
     </footer>
 
-    <!-- DYNAMISCHE INHALTE -->
+    <!-- JAVASCRIPT -->
     <script>
     document.addEventListener("DOMContentLoaded", async () => {
 
-        /* 🔥 FORMULAR-KURSE */
+        /* Kurse laden */
         async function loadCoursesForForm() {
             const select = courseSelectPublic;
             select.innerHTML = '<option value="">Bitte auswählen…</option>';
@@ -145,39 +140,29 @@
             });
         }
 
-        /* 🔥 ANGEBOTE-KARTEN MIT BILD */
+        /* Angebote laden */
         async function loadCourseCards() {
             const container = courseCards;
             container.innerHTML = "";
 
             const snapshot = await db.collection("courses").get();
-            for (const doc of snapshot.docs) {
+            snapshot.forEach(doc => {
                 const c = doc.data();
-
-                let imageUrl = "";
-                if (c.image) {
-                    try {
-                        imageUrl = await storage.ref(c.image).getDownloadURL();
-                    } catch {
-                        imageUrl = "fallback.jpg";
-                    }
-                }
 
                 const card = document.createElement("article");
                 card.classList.add("card");
 
                 card.innerHTML = `
-                    <img src="${imageUrl}" class="card-img" alt="${c.title}">
                     <h3>${c.title}</h3>
                     <p>${c.description}</p>
                     <ul>${c.times.map(t => `<li>${t}</li>`).join("")}</ul>
                 `;
 
                 container.appendChild(card);
-            }
+            });
         }
 
-        /* 🔥 PREISE */
+        /* Preise laden */
         async function loadPricing() {
             const container = pricingCards;
             container.innerHTML = "";
@@ -199,40 +184,19 @@
             });
         }
 
-        /* 🔥 MAIL-FUNKTION (Admin + Käufer) */
+        /* EmailJS Mailfunktion */
         async function sendBookingMail(data) {
-          await fetch("https://formspree.io/f/mvzyqkpw", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              _subject: "Neue Buchung eingegangen",
-              _replyto: data.email,
-              _message: `
-Hallo ${data.name},
-
-vielen Dank für deine verbindliche Buchung!
-
-Hier deine Bestätigung:
-
-Kurs: ${data.course}
-Datum: ${data.date}
-Uhrzeit: ${data.time}
-Telefon: ${data.phone}
-
-Wir freuen uns auf dich!
-Dein Fahrradkurs-Team Saarland
-              `,
-              name: data.name,
-              email: data.email,
-              phone: data.phone,
-              course: data.course,
-              date: data.date,
-              time: data.time
-            })
-          });
+            return emailjs.send("service_b9sh7sh", "template_fhdvonj", {
+                fname: data.name,
+                course: data.course,
+                date: data.date,
+                time: data.time,
+                phone: data.phone,
+                email: data.email
+            });
         }
 
-        /* 🔥 BUCHUNG SPEICHERN + MAIL SENDEN */
+        /* Buchung speichern + Mail senden */
         bookingForm.addEventListener("submit", async (e) => {
             e.preventDefault();
 
@@ -247,23 +211,18 @@ Dein Fahrradkurs-Team Saarland
             };
 
             await db.collection("bookings").add(booking);
-
             await sendBookingMail(booking);
 
-            alert("Buchung erfolgreich! Du erhältst gleich eine Bestätigung.");
+            alert("Buchung erfolgreich! Eine Bestätigung wurde versendet.");
             bookingForm.reset();
         });
 
-        /* 🔥 ALLES LADEN */
         loadCoursesForForm();
         loadCourseCards();
         loadPricing();
 
     });
     </script>
-
-    <!-- BUCHUNGSLOGIK -->
-    <script src="script.js?v=3001"></script>
 
 </body>
 </html>
