@@ -10,7 +10,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 
-  <!-- WICHTIG: Firebase INITIALISIEREN, BEVOR admin.js geladen wird -->
+  <!-- Firebase INITIALISIEREN -->
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyD8dM3SYRmHI52aJnOIVLCkfbHAmM5h678",
@@ -26,23 +26,17 @@
     const db = firebase.firestore();
 
     // Admin-Schutz
-    if (!firebase.auth().currentUser) {
-    if (localStorage.getItem("adminLoggedIn") !== "true") {
-      window.location.href = "login.html";
-    }
-  }
+    firebase.auth().onAuthStateChanged(user => {
+      if (!user && localStorage.getItem("adminLoggedIn") !== "true") {
+        window.location.href = "login.html";
+      }
+    });
   </script>
 
   <link rel="stylesheet" href="admin.css">
 </head>
+
 <body>
-
-<!-- DEIN ADMIN-HTML INHALT HIER -->
-
-<script src="admin.js"></script>
-</body>
-</html>
-
 
 <div class="admin-container">
 
@@ -151,6 +145,7 @@ function scrollToSection(id) {
 }
 </script>
 
+<!-- WICHTIG: admin.js NUR EINMAL laden -->
 <script src="admin.js"></script>
 
 </body>
