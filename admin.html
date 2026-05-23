@@ -12,16 +12,15 @@
 
   <script>
     const firebaseConfig = {
-      apiKey: "DEIN_API_KEY",
-      authDomain: "DEIN_PROJECT.firebaseapp.com",
-      projectId: "DEIN_PROJECT"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+  apiKey: "AIzaSyD8dM3SYRmHI52aJnOIVLCkfbHAmM5h678",
+  authDomain: "bike-kurse.firebaseapp.com",
+  projectId: "bike-kurse",
+  storageBucket: "bike-kurse.firebasestorage.app",
+  messagingSenderId: "581675622978",
+  appId: "1:581675622978:web:9e0c051d13f5a1581083db",
+  measurementId: "G-PYMPVZ3753"
+};
 
-    if (localStorage.getItem("adminLoggedIn") !== "true") {
-      window.location.href = "login.html";
-    }
   </script>
 
   <link rel="stylesheet" href="admin.css">
