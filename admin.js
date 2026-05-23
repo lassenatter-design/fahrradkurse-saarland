@@ -227,6 +227,24 @@ document.addEventListener("DOMContentLoaded", () => {
       bookingList.appendChild(li);
     });
   }
+  const courseSnapshot = await db.collection("courses")
+    .where("formValue", "==", booking.course)
+    .get();
+
+let courseName = booking.course;
+
+if (!courseSnapshot.empty) {
+    courseName = courseSnapshot.docs[0].data().title;
+}
+
+row.innerHTML = `
+    <td>${booking.name}</td>
+    <td>${booking.email}</td>
+    <td>${courseName}</td>
+    <td>${booking.date}</td>
+    <td>${booking.time}</td>
+`;
+
 
   /* 🔥 FILTER */
   if (bookingDateFilter) {
