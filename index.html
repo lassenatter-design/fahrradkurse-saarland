@@ -201,12 +201,12 @@
 
         /* 🔥 MAIL-FUNKTION (Admin + Käufer) */
         async function sendBookingMail(data) {
-          await fetch("https://formspree.io/f/DEINE_FORM_ID", {
+          await fetch("https://formspree.io/f/mvzyqkpw", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               _subject: "Neue Buchung eingegangen",
-              _replyto: data.email, 
+              _replyto: data.email,
               _message: `
 Hallo ${data.name},
 
