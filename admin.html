@@ -3,155 +3,123 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin – Fahrradkurse Saarland</title>
+  <title>Admin Dashboard</title>
 
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 
   <script>
     const firebaseConfig = {
-      apiKey: "AIzaSyD8dM3SYRmHI52aJnOIVLCkfbHAmM5h678",
-      authDomain: "bike-kurse.firebaseapp.com",
-      projectId: "bike-kurse",
-      storageBucket: "bike-kurse.firebasestorage.app",
-      messagingSenderId: "581675622978",
-      appId: "1:581675622978:web:9e0c051d13f5a1581083db",
-      measurementId: "G-PYMPVZ3753"
+      apiKey: "DEIN_API_KEY",
+      authDomain: "DEIN_PROJECT.firebaseapp.com",
+      projectId: "DEIN_PROJECT"
     };
-
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-    const storage = firebase.storage();
+
+    // Admin-Schutz
+    if (localStorage.getItem("adminLoggedIn") !== "true") {
+      window.location.href = "login.html";
+    }
   </script>
 
-  <link rel="stylesheet" href="style.css?v=2001">
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<script>
-  if (localStorage.getItem("adminLoggedIn") !== "true") {
-    window.location.href = "login.html";
-  }
-</script>
+<header class="section">
+  <h1>Admin Dashboard</h1>
+  <p>Verwalte Kurse und Buchungszeiten.</p>
+  <button id="logoutBtn" class="btn danger">Logout</button>
+</header>
 
 <section class="section">
-  <h2>Admin Dashboard</h2>
-  <p class="section-subtitle">Verwalte Kurse, Bilder und Buchungszeiten.</p>
+  <h2>Neuen Kurs erstellen</h2>
 
-  <div class="contact-wrapper">
+  <div class="booking-form">
 
-    <!-- KURS ERSTELLEN -->
-    <div class="booking-form">
-      <h3>Neuen Kurs erstellen</h3>
+    <label>Kurs-ID (z.B. kinder, erwachsene)</label>
+    <input id="newCourseId">
 
-      <label>Kurs-ID (z.B. kinder, erwachsene)</label>
-      <input id="newCourseId">
+    <label>Titel</label>
+    <input id="newCourseTitle">
 
-      <label>Titel</label>
-      <input id="newCourseTitle">
+    <label>Label im Formular</label>
+    <input id="newCourseLabel">
 
-      <label>Label im Formular</label>
-      <input id="newCourseLabel">
+    <label>Formular-Wert</label>
+    <input id="newCourseFormValue">
 
-      <label>Formular-Wert</label>
-      <input id="newCourseFormValue">
+    <label>Beschreibung</label>
+    <textarea id="newCourseDescription"></textarea>
 
-      <label>Beschreibung</label>
-      <textarea id="newCourseDescription"></textarea>
+    <label>Preis</label>
+    <input id="newCoursePrice" type="number">
 
-      <label>Preis</label>
-      <input id="newCoursePrice">
+    <label>Tag (1 = Montag, 4 = Donnerstag)</label>
+    <input id="newCourseDay" type="number">
 
-      <label>Tag (1 = Montag, 4 = Donnerstag)</label>
-      <input id="newCourseDay" type="number" min="1" max="7">
+    <label>Zeiten (kommagetrennt)</label>
+    <input id="newCourseTimes">
 
-      <label>Zeiten (kommagetrennt)</label>
-      <input id="newCourseTimes">
-
-      <label>Kursbild hochladen</label>
-      <input type="file" id="newCourseImage">
-
-      <button id="createCourse" class="btn primary" style="margin-top:12px;">
-        Kurs erstellen
-      </button>
-    </div>
-
-    <!-- KURS BEARBEITEN -->
-    <div class="booking-form">
-      <h3>Kurs bearbeiten</h3>
-
-      <label>Kurs auswählen</label>
-      <select id="courseSelect">
-        <option value="">Bitte auswählen…</option>
-      </select>
-
-      <label>Titel</label>
-      <input id="courseTitle">
-
-      <label>Label im Formular</label>
-      <input id="courseLabel">
-
-      <label>Formular-Wert</label>
-      <input id="courseFormValue">
-
-      <label>Beschreibung</label>
-      <textarea id="courseDescription"></textarea>
-
-      <label>Preis</label>
-      <input id="coursePrice">
-
-      <label>Tag</label>
-      <input id="courseDay" type="number" min="1" max="7">
-
-      <label>Zeiten</label>
-      <input id="courseTimes">
-
-      <label>Neues Bild hochladen (optional)</label>
-      <input type="file" id="courseImage">
-
-      <img id="courseImagePreview" style="width:100%; margin-top:10px; border-radius:8px; display:none;">
-
-      <button id="saveCourse" class="btn primary" style="margin-top:12px;">
-        Kurs speichern
-      </button>
-
-      <button id="deleteCourse" class="btn secondary" style="margin-top:12px; background:#d9534f;">
-        Kurs löschen
-      </button>
-    </div>
-
-    <!-- ZEITEN SPERREN -->
-    <div class="booking-form">
-      <h3>Zeiten sperren</h3>
-
-      <label>Datum wählen</label>
-      <input type="date" id="adminDate">
-
-      <div id="timeList" class="cards" style="margin-top:16px;"></div>
-
-      <button id="clearAll" class="btn secondary" style="margin-top:16px;">
-        Alle Sperrungen löschen
-      </button>
-    </div>
-
-    <!-- GESPERRTE ZEITEN -->
-    <div class="booking-form">
-      <h3>Gesperrte Zeiten</h3>
-      <ul id="blockedList" style="list-style:none; padding-left:0;"></ul>
-
-      <hr style="margin:18px 0; border:none; border-top:1px solid #ccc;">
-
-      <button id="logoutBtn" class="btn secondary">Logout</button>
-    </div>
-
+    <button id="createCourse" class="btn primary">Kurs erstellen</button>
   </div>
 </section>
 
-<!-- ADMIN LOGIK -->
-<script src="admin.js?v=2001"></script>
+<section class="section">
+  <h2>Kurs bearbeiten</h2>
+
+  <div class="booking-form">
+
+    <label>Kurs auswählen</label>
+    <select id="courseSelect">
+      <option value="">Bitte auswählen…</option>
+    </select>
+
+    <label>Titel</label>
+    <input id="courseTitle">
+
+    <label>Label im Formular</label>
+    <input id="courseLabel">
+
+    <label>Formular-Wert</label>
+    <input id="courseFormValue">
+
+    <label>Beschreibung</label>
+    <textarea id="courseDescription"></textarea>
+
+    <label>Preis</label>
+    <input id="coursePrice" type="number">
+
+    <label>Tag</label>
+    <input id="courseDay" type="number">
+
+    <label>Zeiten</label>
+    <input id="courseTimes">
+
+    <button id="saveCourse" class="btn primary">Kurs speichern</button>
+    <button id="deleteCourse" class="btn danger">Kurs löschen</button>
+  </div>
+</section>
+
+<section class="section">
+  <h2>Zeit-Sperrungen</h2>
+
+  <label>Datum auswählen</label>
+  <input id="adminDate" type="date">
+
+  <h3>Zeiten</h3>
+  <div id="timeList"></div>
+
+  <h3>Gesperrte Zeiten</h3>
+  <ul id="blockedList"></ul>
+
+  <button id="clearAll" class="btn danger">Alle Sperrungen löschen</button>
+</section>
+
+<script src="admin.js"></script>
 
 </body>
 </html>
