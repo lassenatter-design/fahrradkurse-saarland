@@ -11,7 +11,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const newCoursePrice = document.getElementById("newCoursePrice");
   const newCourseDay = document.getElementById("newCourseDay");
   const newCourseTimes = document.getElementById("newCourseTimes");
-  const newCourseImage = document.getElementById("newCourseImage");
   const createCourse = document.getElementById("createCourse");
 
   const courseSelect = document.getElementById("courseSelect");
@@ -22,8 +21,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const coursePrice = document.getElementById("coursePrice");
   const courseDay = document.getElementById("courseDay");
   const courseTimes = document.getElementById("courseTimes");
-  const courseImage = document.getElementById("courseImage");
-  const courseImagePreview = document.getElementById("courseImagePreview");
   const saveCourse = document.getElementById("saveCourse");
   const deleteCourse = document.getElementById("deleteCourse");
 
@@ -44,11 +41,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const id = newCourseId.value.trim();
     if (!id) return alert("Bitte Kurs-ID eingeben.");
 
-    let imagePath = "";
-    if (newCourseImage.files.length > 0) {
-      imagePath = `courses/${id}.jpg`; // Bild muss in GitHub liegen
-    }
-
     await db.collection("courses").doc(id).set({
       title: newCourseTitle.value,
       label: newCourseLabel.value,
@@ -56,8 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
       description: newCourseDescription.value,
       price: newCoursePrice.value,
       day: parseInt(newCourseDay.value),
-      times: newCourseTimes.value.split(",").map(t => t.trim()),
-      image: imagePath
+      times: newCourseTimes.value.split(",").map(t => t.trim())
     });
 
     alert("Kurs erstellt.");
@@ -92,22 +83,12 @@ document.addEventListener("DOMContentLoaded", () => {
     coursePrice.value = c.price;
     courseDay.value = c.day;
     courseTimes.value = c.times.join(",");
-
-    if (c.image) {
-      courseImagePreview.src = c.image;
-      courseImagePreview.style.display = "block";
-    }
   };
 
   /* 🔥 KURS SPEICHERN */
   saveCourse.onclick = async () => {
     const id = courseSelect.value;
     if (!id) return alert("Bitte Kurs auswählen.");
-
-    let imagePath = null;
-    if (courseImage.files.length > 0) {
-      imagePath = `courses/${id}.jpg`;
-    }
 
     const update = {
       title: courseTitle.value,
@@ -118,8 +99,6 @@ document.addEventListener("DOMContentLoaded", () => {
       day: parseInt(courseDay.value),
       times: courseTimes.value.split(",").map(t => t.trim())
     };
-
-    if (imagePath) update.image = imagePath;
 
     await db.collection("courses").doc(id).set(update, { merge: true });
 
