@@ -5,19 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Login</title>
 
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 
-  <script>const firebaseConfig = {
-  apiKey: "AIzaSyD8dM3SYRmHI52aJnOIVLCkfbHAmM5h678",
-  authDomain: "bike-kurse.firebaseapp.com",
-  projectId: "bike-kurse",
-  storageBucket: "bike-kurse.firebasestorage.app",
-  messagingSenderId: "581675622978",
-  appId: "1:581675622978:web:9e0c051d13f5a1581083db",
-  measurementId: "G-PYMPVZ3753"
-};
-</script>
+  <!-- WICHTIG: Firebase INITIALISIEREN -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyD8dM3SYRmHI52aJnOIVLCkfbHAmM5h678",
+      authDomain: "bike-kurse.firebaseapp.com",
+      projectId: "bike-kurse",
+      storageBucket: "bike-kurse.firebasestorage.app",
+      messagingSenderId: "581675622978",
+      appId: "1:581675622978:web:9e0c051d13f5a1581083db",
+      measurementId: "G-PYMPVZ3753"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+  </script>
 
   <style>
     body {
