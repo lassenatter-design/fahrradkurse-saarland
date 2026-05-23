@@ -139,6 +139,31 @@
                 select.appendChild(opt);
             });
         }
+        /* 🔥 Uhrzeiten dynamisch aus Firestore laden */
+            courseSelectPublic.addEventListener("change", async () => {
+                const selected = courseSelectPublic.value;
+                const timePicker = document.getElementById("timePicker");
+
+                timePicker.innerHTML = ""; // alte Zeiten löschen
+
+                if (!selected) return;
+
+                const snapshot = await db.collection("courses")
+                    .where("formValue", "==", selected)
+                    .get();
+
+                if (snapshot.empty) return;
+
+                const course = snapshot.docs[0].data();
+
+                // Zeiten einfügen
+                course.times.forEach(t => {
+                    const opt = document.createElement("option");
+                    opt.value = t;
+                    opt.textContent = t;
+                    timePicker.appendChild(opt);
+                });
+            });
 
         /* Angebote laden */
         async function loadCourseCards() {
