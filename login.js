@@ -1,14 +1,13 @@
-const auth = firebase.auth();
+const email = document.getElementById("email");
+const password = document.getElementById("password");
+const loginBtn = document.getElementById("loginBtn");
 
 loginBtn.onclick = async () => {
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value.trim();
-
   try {
-    await auth.signInWithEmailAndPassword(email, password);
+    await firebase.auth().signInWithEmailAndPassword(email.value, password.value);
     localStorage.setItem("adminLoggedIn", "true");
     window.location.href = "admin.html";
   } catch (err) {
-    errorMsg.textContent = "Login fehlgeschlagen.";
+    alert("Login fehlgeschlagen: " + err.message);
   }
 };
