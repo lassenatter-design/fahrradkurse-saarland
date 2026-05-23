@@ -26,9 +26,11 @@
     const db = firebase.firestore();
 
     // Admin-Schutz
+    if (!firebase.auth().currentUser) {
     if (localStorage.getItem("adminLoggedIn") !== "true") {
       window.location.href = "login.html";
     }
+  }
   </script>
 
   <link rel="stylesheet" href="admin.css">
